@@ -10,7 +10,6 @@
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; color: #333; }
         header { background: #fff; padding: 15px; text-align: center; border-bottom: 3px solid var(--main); position: sticky; top: 0; z-index: 1000; }
         
-        /* Qidiruv bo'limi */
         .search-container { padding: 10px 15px; background: #fff; position: sticky; top: 60px; z-index: 999; }
         .search-input { 
             width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; 
@@ -25,7 +24,6 @@
         .price { color: var(--main); font-weight: bold; font-size: 15px; }
         .title { font-size: 13px; margin: 5px 0; height: 32px; overflow: hidden; font-weight: 500; }
 
-        /* Modal */
         .modal { 
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: flex-end; 
@@ -52,19 +50,35 @@
     <input type="text" id="search" class="search-input" placeholder="Mahsulot qidirish..." onkeyup="filterProducts()">
 </div>
 
-<div class="container" id="product-list">
-    </div>
+<div class="container" id="product-list"></div>
 
 <div id="order-modal" class="modal" onclick="if(event.target == this) closeModal()">
     <div class="modal-content">
         <h3 id="m-title" style="margin:0 0 10px 0;"></h3>
         <p id="m-price" style="color: var(--main); font-weight: bold; font-size: 20px;"></p>
+        
         <div class="select-box">
-            <select id="p-color"><option>Qora</option><option>Oq</option><option>Ko'k</option></select>
+            <label style="font-size: 12px; color: #888;">Rangni tanlang:</label>
+            <select id="p-color">
+                <option>Qora</option>
+                <option>Oq</option>
+                <option>Ko'k</option>
+                <option>Jigarrang</option>
+            </select>
         </div>
+        
         <div class="select-box">
-            <select id="p-size"><option>Standart</option><option>M</option><option>L</option><option>XL</option></select>
+            <label style="font-size: 12px; color: #888;">O'lchamni tanlang:</label>
+            <select id="p-size">
+                <option>S (38-40)</option>
+                <option>M (42-44)</option>
+                <option>L (46-48)</option>
+                <option>XL (50-52)</option>
+                <option>XXL (54)</option>
+                <option>Standart</option>
+            </select>
         </div>
+
         <button class="btn-pay btn-100" onclick="send('100%')">100% To'lov bilan xarid qilish</button>
         <button class="btn-pay btn-50" onclick="send('50%')">50% Oldindan to'lov</button>
         <button class="btn-pay btn-close" onclick="closeModal()">Yopish</button>
@@ -76,35 +90,35 @@
     tg.expand();
 
     const products = [
-        {name: "kurtka", price: "200,000", img: "https://avatars.mds.yandex.net/i?id=7a2fa29528b89531e34b0bbcba1c88bcc60c8255-7090441-images-thumbs&n=13"},
-        {name: "polo dvoyka", price: "170,050", img: "https://avatars.mds.yandex.net/i?id=b8b693d50f4c2381d985a1c8f33d3cb0be4ca464-4027983-images-thumbs&n=13"},
-        {name: "shapka", price: "59,830", img: "https://avatars.mds.yandex.net/i?id=558589a6a1e4c98a2eea56379a7032e784a52801-9577606-images-thumbs&n=13"},
-        {name: "sviter", price: "45,000", img: "https://avatars.mds.yandex.net/i?id=e7bc18d39bdea8c4b9a2e51aaf41410d87f358e7-5086991-images-thumbs&n=13"},
+        {name: "Kurtka qishki", price: "200,000", img: "https://avatars.mds.yandex.net/i?id=7a2fa29528b89531e34b0bbcba1c88bcc60c8255-7090441-images-thumbs&n=13"},
+        {name: "Polo dvoyka", price: "170,050", img: "https://avatars.mds.yandex.net/i?id=b8b693d50f4c2381d985a1c8f33d3cb0be4ca464-4027983-images-thumbs&n=13"},
+        {name: "Shapka", price: "59,830", img: "https://avatars.mds.yandex.net/i?id=558589a6a1e4c98a2eea56379a7032e784a52801-9577606-images-thumbs&n=13"},
+        {name: "Sviter", price: "45,000", img: "https://avatars.mds.yandex.net/i?id=e7bc18d39bdea8c4b9a2e51aaf41410d87f358e7-5086991-images-thumbs&n=13"},
         {name: "Mi Power Bank 20000", price: "170,000", img: "https://avatars.mds.yandex.net/i?id=e950181bfbc900af6b358a085da67268865d7bcf-15290049-images-thumbs&n=13"},
-        {name: "ko'zoynak", price: "45,000", img: "https://avatars.mds.yandex.net/i?id=49033b76c8f84a8cb80f5b46c6f49dd3e2e7685c-5877477-images-thumbs&n=13"},
-        {name: "mafiya", price: "40,000", img: "https://avatars.mds.yandex.net/i?id=edef3ffbc286e535ca0aff0694bdf475dc2021a0-5354907-images-thumbs&n=13"},
+        {name: "Ko'zoynak", price: "45,000", img: "https://avatars.mds.yandex.net/i?id=49033b76c8f84a8cb80f5b46c6f49dd3e2e7685c-5877477-images-thumbs&n=13"},
+        {name: "Mafiya o'yini", price: "40,000", img: "https://avatars.mds.yandex.net/i?id=edef3ffbc286e535ca0aff0694bdf475dc2021a0-5354907-images-thumbs&n=13"},
         {name: "Mechanical Keyboard", price: "350,000", img: "https://avatars.mds.yandex.net/i?id=eea5791ce524982e6393cc4048a7825e53385a1a-5241810-images-thumbs&n=13"},
         {name: "JBL Speaker Go 3", price: "320,000", img: "https://avatars.mds.yandex.net/i?id=88c4fe46b40dbe46f1360156898080269b8b5d22-7051630-images-thumbs&n=13"},
-        {name: "real madrid futbolka", price: "89,000", img: "https://avatars.mds.yandex.net/i?id=91dd766c7da0e17bca09609db0d0ff523bb867ee-5646461-images-thumbs&n=13"},
-        {name: "neymar butsisi", price: "190,000", img: "https://avatars.mds.yandex.net/i?id=20e41b813f6af64a137d2fab979591ef66dee885-4395422-images-thumbs&n=13"},
-        {name: "krishtiano hqida kitob", price: "200,000", img: "https://avatars.mds.yandex.net/i?id=dfef5ae0ec768157281bd829026de5ce389aa7d0-5429318-images-thumbs&n=13"},
-        {name: "qishki dvoyka qizlar uchun", price: "105,000", img: "https://avatars.mds.yandex.net/i?id=98b3f9bd3f5cb050d6be639430d9aaf0f2e263cc-4271045-images-thumbs&n=13"},
-        {name: "palto qizlarga", price: "300,000", img: "https://avatars.mds.yandex.net/i?id=a7efa429cbcef6e3bebf90a892e8ae1aeb506f06-5222634-images-thumbs&n=13"},
-        {name: "palto erkaklarga", price: "280,000", img: "https://avatars.mds.yandex.net/i?id=1adb9595f08fba6e276954fdd52e8900a9bbe0d3-7001681-images-thumbs&n=13"},
-        {name: "sapok erkaklarga", price: "140,000", img: "https://avatars.mds.yandex.net/i?id=536c1a2fa86776ba13eb7759d8c89fadfc36c88f-5889153-images-thumbs&n=13"},
-        {name: "sapok qizlarga", price: "120,000", img: "https://avatars.mds.yandex.net/i?id=d21822deeee9abc5897eb50b623ace5ef914225f-3939836-images-thumbs&n=13"},
-        {name: "sumka dior", price: "195,000", img: "https://avatars.mds.yandex.net/i?id=c2550d25a95e3ee5f3a34d4f7e3dcde48a249936-5527422-images-thumbs&n=13"},
-        {name: "krasovka ayollar uchun", price: "75,000", img: "https://avatars.mds.yandex.net/i?id=cc77aac32bc122a736dc13a1b828d12e0c2a0aa6-6947220-images-thumbs&n=13"},
-        {name: "ryukzak mark ryuden", price: "220,000", img: "https://avatars.mds.yandex.net/i?id=d43be98ba4cd9be9558722ab10e0f1da22a777d0-4810024-images-thumbs&n=13"},
-        {name: "kamera", price: "45,000", img: "https://avatars.mds.yandex.net/i?id=800eed65d15ba9c1a19e57b1aadaee82f7cf6e61-5449367-images-thumbs&n=13"},
-        {name: "naushnik", price: "55,000", img: "https://avatars.mds.yandex.net/i?id=fa34a753fa7b6e22f35e3b12b89431a7facc3afc-5496468-images-thumbs&n=13"},
-        {name: "tufli", price: "130,000", img: "https://avatars.mds.yandex.net/i?id=01771de925129e0199a209027857c577f9200cbb-9848644-images-thumbs&n=13"},
-        {name: "Butsi", price: "160,000", img: "https://avatars.mds.yandex.net/i?id=843089804b51e0868e0f19016b6b2aa2be83e18b-16408336-images-thumbs&n=13"},
-        {name: "qo'lsoat", price: "40,000", img: "https://avatars.mds.yandex.net/i?id=bb0fa29d0b0dfe7caeba9343ec0f973563003688-12627675-images-thumbs&n=13"},
-        {name: "klaviatura", price: "65,000", img: "https://avatars.mds.yandex.net/i?id=b909bfb36953a4f529e4a8e42bf6e03ad8b5b6d5-6405784-images-thumbs&n=13"},
-        {name: "bryuk italyaniskiy", price: "110,000", img: "https://avatars.mds.yandex.net/i?id=9a57bb0276256569a622723951453df5169f24b1-4569449-images-thumbs&n=13"},
-        {name: "ruchka 1 pachka", price: "14,000", img: "https://avatars.mds.yandex.net/i?id=b6d381f7b9486987eb7ebc20f9ba5f6c-5336269-images-thumbs&n=13"},
-        {name: "seyf", price: "285,000", img: "https://avatars.mds.yandex.net/i?id=4086128733f66473ccc301049041a628d0e88add-9589172-images-thumbs&n=13"}
+        {name: "Real Madrid futbolka", price: "89,000", img: "https://avatars.mds.yandex.net/i?id=91dd766c7da0e17bca09609db0d0ff523bb867ee-5646461-images-thumbs&n=13"},
+        {name: "Neymar butsisi", price: "190,000", img: "https://avatars.mds.yandex.net/i?id=20e41b813f6af64a137d2fab979591ef66dee885-4395422-images-thumbs&n=13"},
+        {name: "Cristiano kitobi", price: "200,000", img: "https://avatars.mds.yandex.net/i?id=dfef5ae0ec768157281bd829026de5ce389aa7d0-5429318-images-thumbs&n=13"},
+        {name: "Qishki dvoyka (qizlar)", price: "105,000", img: "https://avatars.mds.yandex.net/i?id=98b3f9bd3f5cb050d6be639430d9aaf0f2e263cc-4271045-images-thumbs&n=13"},
+        {name: "Palto (qizlar uchun)", price: "300,000", img: "https://avatars.mds.yandex.net/i?id=a7efa429cbcef6e3bebf90a892e8ae1aeb506f06-5222634-images-thumbs&n=13"},
+        {name: "Palto (erkaklar uchun)", price: "280,000", img: "https://avatars.mds.yandex.net/i?id=1adb9595f08fba6e276954fdd52e8900a9bbe0d3-7001681-images-thumbs&n=13"},
+        {name: "Etik (sapok) erkaklar", price: "140,000", img: "https://avatars.mds.yandex.net/i?id=536c1a2fa86776ba13eb7759d8c89fadfc36c88f-5889153-images-thumbs&n=13"},
+        {name: "Etik (sapok) qizlar", price: "120,000", img: "https://avatars.mds.yandex.net/i?id=d21822deeee9abc5897eb50b623ace5ef914225f-3939836-images-thumbs&n=13"},
+        {name: "Sumka Dior", price: "195,000", img: "https://avatars.mds.yandex.net/i?id=c2550d25a95e3ee5f3a34d4f7e3dcde48a249936-5527422-images-thumbs&n=13"},
+        {name: "Krasovka (ayollar)", price: "75,000", img: "https://avatars.mds.yandex.net/i?id=cc77aac32bc122a736dc13a1b828d12e0c2a0aa6-6947220-images-thumbs&n=13"},
+        {name: "Ryukzak Mark Ryden", price: "220,000", img: "https://avatars.mds.yandex.net/i?id=d43be98ba4cd9be9558722ab10e0f1da22a777d0-4810024-images-thumbs&n=13"},
+        {name: "Kamera", price: "45,000", img: "https://avatars.mds.yandex.net/i?id=800eed65d15ba9c1a19e57b1aadaee82f7cf6e61-5449367-images-thumbs&n=13"},
+        {name: "Naushnik", price: "55,000", img: "https://avatars.mds.yandex.net/i?id=fa34a753fa7b6e22f35e3b12b89431a7facc3afc-5496468-images-thumbs&n=13"},
+        {name: "Tufli classic", price: "130,000", img: "https://avatars.mds.yandex.net/i?id=01771de925129e0199a209027857c577f9200cbb-9848644-images-thumbs&n=13"},
+        {name: "Butsi (futbol)", price: "160,000", img: "https://avatars.mds.yandex.net/i?id=843089804b51e0868e0f19016b6b2aa2be83e18b-16408336-images-thumbs&n=13"},
+        {name: "Qo'lsoat Luxury", price: "40,000", img: "https://avatars.mds.yandex.net/i?id=bb0fa29d0b0dfe7caeba9343ec0f973563003688-12627675-images-thumbs&n=13"},
+        {name: "Klaviatura oddiy", price: "65,000", img: "https://avatars.mds.yandex.net/i?id=b909bfb36953a4f529e4a8e42bf6e03ad8b5b6d5-6405784-images-thumbs&n=13"},
+        {name: "Bryuk Italianskiy", price: "110,000", img: "https://avatars.mds.yandex.net/i?id=9a57bb0276256569a622723951453df5169f24b1-4569449-images-thumbs&n=13"},
+        {name: "Ruchka 1 pachka", price: "14,000", img: "https://avatars.mds.yandex.net/i?id=b6d381f7b9486987eb7ebc20f9ba5f6c-5336269-images-thumbs&n=13"},
+        {name: "Seyf (xavfsiz)", price: "285,000", img: "https://avatars.mds.yandex.net/i?id=4086128733f66473ccc301049041a628d0e88add-9589172-images-thumbs&n=13"}
     ];
 
     let selectedP = {};
@@ -113,7 +127,7 @@
         const list = document.getElementById('product-list');
         list.innerHTML = items.map(p => `
             <div class="card" onclick="openOrder('${p.name}', '${p.price}')">
-                <img src="${p.img || 'https://via.placeholder.com/150?text=Rasm+yoq'}">
+                <img src="${p.img}">
                 <div class="p-info">
                     <div class="title">${p.name}</div>
                     <div class="price">${p.price} so'm</div>
@@ -145,7 +159,7 @@
         window.location.href = `https://t.me/Ruslanbek20119?text=${text}`;
     }
 
-    renderProducts(products); // Dastlab hamma mahsulotni chiqarish
+    renderProducts(products);
 </script>
 
 </body>
