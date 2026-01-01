@@ -6,7 +6,7 @@
     <title>Ruslan Market | Karta bilan To'lov</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --main: #7f46f0; --orange: #ff9800; --green: #28a745; --blue: #007bff; }
+        :root { --main: #7f46f0; --orange: #ff9800; --green: #28a745; --blue: #007bff; --red: #dc3545; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; padding-bottom: 80px; }
         #auth-page { position: fixed; inset: 0; background: #fff; z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .auth-card { width: 100%; max-width: 320px; text-align: center; }
@@ -138,12 +138,10 @@
     
     function checkPromo() {
         const val = document.getElementById('promo-code').value.toUpperCase();
-        // Har qanday belgidan tozalab faqat sonni olamiz
         let p = parseInt(selectedP.rawPrice.replace(/\D/g, ''));
-
         if(val.startsWith("RUSLAN") && val.length > 6) {
-            let d = Math.round(p * 0.75); // 25% chegirma
-            let formatted = d.toLocaleString(); // Mingliklarni ajratish (000 qo'shish)
+            let d = Math.round(p * 0.75);
+            let formatted = d.toLocaleString();
             document.getElementById('m-price').innerHTML = `<del style="color:red; font-size:15px;">${selectedP.rawPrice}</del> ${formatted} so'm`;
             selectedP.finalPrice = formatted;
         } else { 
@@ -166,11 +164,21 @@
         if(!order) { container.innerHTML = "<p style='text-align:center;'>Buyurtma yo'q</p>"; return; }
         
         if(order.status === "rejected") {
-            container.innerHTML = `<div class="status-box" style="border-left: 5px solid red;">
+            container.innerHTML = `<div class="status-box" style="border-left: 5px solid var(--red);">
                 <b>${order.name}</b><br>
-                <span style="color:red; font-weight:bold;">❌ To'lov tasdiqlanmadi</span><br>
+                <span style="color:var(--red); font-weight:bold;">❌ To'lov tasdiqlanmadi</span><br>
                 <small>Admin to'lovni rad etdi. Iltimos, qaytadan buyurtma bering.</small><br><br>
-                <button onclick="localStorage.removeItem('my_order'); showPage('shop', document.querySelectorAll('.nav-item')[0])" style="background:red; color:white; border:none; padding:8px; border-radius:8px;">Qaytadan buyurtma berish</button>
+                <button onclick="localStorage.removeItem('my_order'); showPage('shop', document.querySelectorAll('.nav-item')[0])" style="background:var(--red); color:white; border:none; padding:8px; border-radius:8px;">Qaytadan buyurtma berish</button>
+            </div>`;
+            return;
+        }
+
+        if(order.status === "received") {
+            container.innerHTML = `<div class="status-box" style="border-left: 5px solid var(--green);">
+                <b>${order.name}</b><br>
+                <span style="color:var(--green); font-weight:bold;">✅ Yetkazib berildi!</span><br>
+                <small>Xaridingiz uchun rahmat. Buyurtma yakunlandi.</small><br><br>
+                <button onclick="localStorage.removeItem('my_order'); showPage('shop', document.querySelectorAll('.nav-item')[0])" style="background:var(--main); color:white; border:none; padding:8px; border-radius:8px;">Yangi buyurtma</button>
             </div>`;
             return;
         }
@@ -180,6 +188,11 @@
                 <b>${order.name}</b><br>
                 <span style="color:var(--green); font-weight:bold;">🚀 Tasdiqlandi. Xitoydan yo'lga chiqdi 🇨🇳</span><br>
                 <small style="color:#888;">Buyurtma vaqti: ${new Date(order.date).toLocaleString()}</small>
+                <div style="margin-top:10px; padding:10px; background:#f9f9f9; border-radius:8px;">
+                    <small>Admin boshqaruvi (GET777):</small><br>
+                    <input type="text" id="admin-code-input" placeholder="Kod..." style="width:50%; padding:5px;">
+                    <button onclick="checkAdminCode()">OK</button>
+                </div>
             </div>`;
             return;
         }
@@ -200,7 +213,7 @@
                 <input type="text" id="admin-code-input" placeholder="Kodni kiriting..." style="width:60%; padding:6px; font-size:11px; border:1px solid #ccc; border-radius:4px;">
                 <button onclick="checkAdminCode()" style="padding:7px; font-size:10px; background:var(--main); color:white; border:none; border-radius:4px; cursor:pointer;">OK</button>
                 <div style="margin-top:5px; font-size:9px; color:#666;">
-                    Tasdiqlash: <b>OK777</b> | Rad etish: <b>XATO777</b>
+                    Tasdiqlash: <b>OK777</b> | Rad: <b>XATO777</b> | Qabul: <b>GET777</b> | Bekor: <b>DELETE777</b>
                 </div>
             </div>
         </div>`;
@@ -215,17 +228,28 @@
             order.status = "rejected";
             localStorage.setItem('my_order', JSON.stringify(order));
             tg.showAlert("To'lov rad etildi!");
-            updateStatus();
         } 
         else if(code === "OK777") {
             order.status = "confirmed";
             localStorage.setItem('my_order', JSON.stringify(order));
-            tg.showAlert("To'lov muvaffaqiyatli tasdiqlandi!");
-            updateStatus();
+            tg.showAlert("Muvaffaqiyatli tasdiqlandi!");
         } 
-        else {
-            tg.showAlert("Noto'g'ri kod kiritildi!");
+        else if(code === "GET777") {
+            order.status = "received";
+            localStorage.setItem('my_order', JSON.stringify(order));
+            tg.showAlert("Buyurtma qabul qilingan deb belgilandi!");
         }
+        else if(code === "DELETE777") {
+            localStorage.removeItem('my_order');
+            tg.showAlert("Buyurtma butunlay o'chirildi!");
+            showPage('shop', document.querySelectorAll('.nav-item')[0]);
+            return;
+        }
+        else {
+            tg.showAlert("Noto'g'ri kod!");
+            return;
+        }
+        updateStatus();
     }
 
     function showPage(p, b) {
