@@ -7,35 +7,32 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --main: #7f46f0; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; color: #333; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; color: #333; padding-bottom: 80px; }
         header { background: #fff; padding: 15px; text-align: center; border-bottom: 3px solid var(--main); position: sticky; top: 0; z-index: 1000; }
         
         .search-container { padding: 10px 15px; background: #fff; position: sticky; top: 60px; z-index: 999; }
-        .search-input { 
-            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; 
-            outline: none; box-sizing: border-box; font-size: 14px; 
-        }
+        .search-input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; outline: none; box-sizing: border-box; font-size: 14px; }
 
         .container { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: #fff; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); cursor: pointer; transition: 0.2s; display: block; }
+        .card { background: #fff; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); cursor: pointer; transition: 0.2s; }
         .card:active { transform: scale(0.96); }
         .card img { width: 100%; height: 140px; object-fit: cover; background: #eee; }
         .p-info { padding: 10px; }
         .price { color: var(--main); font-weight: bold; font-size: 15px; }
         .title { font-size: 13px; margin: 5px 0; height: 32px; overflow: hidden; font-weight: 500; }
 
-        .modal { 
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: flex-end; 
-        }
-        .modal-content { 
-            background: #fff; width: 100%; padding: 25px; border-radius: 25px 25px 0 0; 
-            animation: slideUp 0.3s ease-out; box-sizing: border-box; text-align: center;
-        }
+        /* Pastki menyu */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #ddd; z-index: 1000; }
+        .nav-item { border: none; background: none; font-size: 12px; cursor: pointer; color: #666; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .nav-item.active { color: var(--main); font-weight: bold; }
+
+        /* Modallar */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: flex-end; }
+        .modal-content { background: #fff; width: 100%; padding: 25px; border-radius: 25px 25px 0 0; animation: slideUp 0.3s ease-out; box-sizing: border-box; text-align: center; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
         .select-box { margin-bottom: 15px; text-align: left; }
-        select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #ddd; background: #f9f9f9; }
+        select, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #ddd; background: #f9f9f9; font-family: inherit; }
         .btn-pay { border: none; width: 100%; padding: 15px; border-radius: 12px; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 10px; color: #fff; }
         .btn-100 { background: #28a745; }
         .btn-50 { background: #007bff; }
@@ -46,41 +43,48 @@
 
 <header><h2 style="margin:0;">RUSLAN MARKET</h2></header>
 
-<div class="search-container">
-    <input type="text" id="search" class="search-input" placeholder="Mahsulot qidirish..." onkeyup="filterProducts()">
+<div id="shop-page">
+    <div class="search-container">
+        <input type="text" id="search" class="search-input" placeholder="Mahsulot qidirish..." onkeyup="filterProducts()">
+    </div>
+    <div class="container" id="product-list"></div>
 </div>
 
-<div class="container" id="product-list"></div>
+<div id="info-page" style="display:none; padding: 30px 20px; text-align: center;">
+    <div style="background: var(--main); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 30px; font-weight: bold;">R</div>
+    <h3>Ruslan Market haqida</h3>
+    <p style="line-height: 1.6; color: #666;">Assalomu alaykum! Bizning do'konimiz orqali siz eng sifatli kiyimlar va aksessuarlarni buyurtma qilishingiz mumkin. <br><br> <b>Manzil:</b> Navoiy viloyati<br><b>Yetkazib berish:</b> 10 kun ichida.</p>
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+    <p>Savollaringiz bo'lsa, "Murojaat" bo'limi orqali yozing.</p>
+</div>
+
+<div class="bottom-nav">
+    <button class="nav-item active" onclick="showPage('shop', this)"><span>🛍</span>Do'kon</button>
+    <button class="nav-item" onclick="showPage('info', this)"><span>ℹ️</span>Men haqimda</button>
+    <button class="nav-item" onclick="openContact()"><span>✍️</span>Murojaat</button>
+</div>
 
 <div id="order-modal" class="modal" onclick="if(event.target == this) closeModal()">
     <div class="modal-content">
         <h3 id="m-title" style="margin:0 0 10px 0;"></h3>
         <p id="m-price" style="color: var(--main); font-weight: bold; font-size: 20px;"></p>
-        
         <div class="select-box">
-            <label style="font-size: 12px; color: #888;">Rangni tanlang:</label>
-            <select id="p-color">
-                <option>Qora</option>
-                <option>Oq</option>
-                <option>Ko'k</option>
-                <option>Jigarrang</option>
-            </select>
+            <select id="p-color"><option>Qora</option><option>Oq</option><option>Ko'k</option><option>Jigarrang</option></select>
         </div>
-        
         <div class="select-box">
-            <label style="font-size: 12px; color: #888;">O'lchamni tanlang:</label>
-            <select id="p-size">
-                <option>S (38-40)</option>
-                <option>M (42-44)</option>
-                <option>L (46-48)</option>
-                <option>XL (50-52)</option>
-                <option>XXL (54)</option>
-                <option>Standart</option>
-            </select>
+            <select id="p-size"><option>S (38-40)</option><option>M (42-44)</option><option>L (46-48)</option><option>XL (50-52)</option><option>Standart</option></select>
         </div>
-
         <button class="btn-pay btn-100" onclick="send('100%')">100% To'lov bilan xarid qilish</button>
         <button class="btn-pay btn-50" onclick="send('50%')">50% Oldindan to'lov</button>
+        <button class="btn-pay btn-close" onclick="closeModal()">Yopish</button>
+    </div>
+</div>
+
+<div id="contact-modal" class="modal" onclick="if(event.target == this) closeModal()">
+    <div class="modal-content">
+        <h3>Admin bilan bog'lanish</h3>
+        <textarea id="contact-msg" placeholder="Xabaringizni yozing..." style="height: 100px; margin-bottom: 10px;"></textarea>
+        <button class="btn-pay btn-100" onclick="sendContact()">Xabarni yuborish</button>
         <button class="btn-pay btn-close" onclick="closeModal()">Yopish</button>
     </div>
 </div>
@@ -102,22 +106,7 @@
         {name: "Real Madrid futbolka", price: "89,000", img: "https://avatars.mds.yandex.net/i?id=91dd766c7da0e17bca09609db0d0ff523bb867ee-5646461-images-thumbs&n=13"},
         {name: "Neymar butsisi", price: "190,000", img: "https://avatars.mds.yandex.net/i?id=20e41b813f6af64a137d2fab979591ef66dee885-4395422-images-thumbs&n=13"},
         {name: "Cristiano kitobi", price: "200,000", img: "https://avatars.mds.yandex.net/i?id=dfef5ae0ec768157281bd829026de5ce389aa7d0-5429318-images-thumbs&n=13"},
-        {name: "Qishki dvoyka (qizlar)", price: "105,000", img: "https://avatars.mds.yandex.net/i?id=98b3f9bd3f5cb050d6be639430d9aaf0f2e263cc-4271045-images-thumbs&n=13"},
-        {name: "Palto (qizlar uchun)", price: "300,000", img: "https://avatars.mds.yandex.net/i?id=a7efa429cbcef6e3bebf90a892e8ae1aeb506f06-5222634-images-thumbs&n=13"},
-        {name: "Palto (erkaklar uchun)", price: "280,000", img: "https://avatars.mds.yandex.net/i?id=1adb9595f08fba6e276954fdd52e8900a9bbe0d3-7001681-images-thumbs&n=13"},
-        {name: "Etik (sapok) erkaklar", price: "140,000", img: "https://avatars.mds.yandex.net/i?id=536c1a2fa86776ba13eb7759d8c89fadfc36c88f-5889153-images-thumbs&n=13"},
-        {name: "Etik (sapok) qizlar", price: "120,000", img: "https://avatars.mds.yandex.net/i?id=d21822deeee9abc5897eb50b623ace5ef914225f-3939836-images-thumbs&n=13"},
         {name: "Sumka Dior", price: "195,000", img: "https://avatars.mds.yandex.net/i?id=c2550d25a95e3ee5f3a34d4f7e3dcde48a249936-5527422-images-thumbs&n=13"},
-        {name: "Krasovka (ayollar)", price: "75,000", img: "https://avatars.mds.yandex.net/i?id=cc77aac32bc122a736dc13a1b828d12e0c2a0aa6-6947220-images-thumbs&n=13"},
-        {name: "Ryukzak Mark Ryden", price: "220,000", img: "https://avatars.mds.yandex.net/i?id=d43be98ba4cd9be9558722ab10e0f1da22a777d0-4810024-images-thumbs&n=13"},
-        {name: "Kamera", price: "45,000", img: "https://avatars.mds.yandex.net/i?id=800eed65d15ba9c1a19e57b1aadaee82f7cf6e61-5449367-images-thumbs&n=13"},
-        {name: "Naushnik", price: "55,000", img: "https://avatars.mds.yandex.net/i?id=fa34a753fa7b6e22f35e3b12b89431a7facc3afc-5496468-images-thumbs&n=13"},
-        {name: "Tufli classic", price: "130,000", img: "https://avatars.mds.yandex.net/i?id=01771de925129e0199a209027857c577f9200cbb-9848644-images-thumbs&n=13"},
-        {name: "Butsi (futbol)", price: "160,000", img: "https://avatars.mds.yandex.net/i?id=843089804b51e0868e0f19016b6b2aa2be83e18b-16408336-images-thumbs&n=13"},
-        {name: "Qo'lsoat Luxury", price: "40,000", img: "https://avatars.mds.yandex.net/i?id=bb0fa29d0b0dfe7caeba9343ec0f973563003688-12627675-images-thumbs&n=13"},
-        {name: "Klaviatura oddiy", price: "65,000", img: "https://avatars.mds.yandex.net/i?id=b909bfb36953a4f529e4a8e42bf6e03ad8b5b6d5-6405784-images-thumbs&n=13"},
-        {name: "Bryuk Italianskiy", price: "110,000", img: "https://avatars.mds.yandex.net/i?id=9a57bb0276256569a622723951453df5169f24b1-4569449-images-thumbs&n=13"},
-        {name: "Ruchka 1 pachka", price: "14,000", img: "https://avatars.mds.yandex.net/i?id=b6d381f7b9486987eb7ebc20f9ba5f6c-5336269-images-thumbs&n=13"},
         {name: "Seyf (xavfsiz)", price: "285,000", img: "https://avatars.mds.yandex.net/i?id=4086128733f66473ccc301049041a628d0e88add-9589172-images-thumbs&n=13"}
     ];
 
@@ -142,6 +131,13 @@
         renderProducts(filtered);
     }
 
+    function showPage(page, btn) {
+        document.getElementById('shop-page').style.display = page === 'shop' ? 'block' : 'none';
+        document.getElementById('info-page').style.display = page === 'info' ? 'block' : 'none';
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
     function openOrder(name, price) {
         selectedP = {name, price};
         document.getElementById('m-title').innerText = name;
@@ -150,17 +146,34 @@
         tg.HapticFeedback.impactOccurred('medium');
     }
 
-    function closeModal() { document.getElementById('order-modal').style.display = 'none'; }
+    function openContact() { document.getElementById('contact-modal').style.display = 'flex'; }
+    function closeModal() { 
+        document.getElementById('order-modal').style.display = 'none'; 
+        document.getElementById('contact-modal').style.display = 'none'; 
+    }
 
     function send(type) {
         const color = document.getElementById('p-color').value;
         const size = document.getElementById('p-size').value;
-        const text = `🚀 *Yangi buyurtma!*%0A%0A📦 *Mahsulot:* ${selectedP.name}%0A💰 *Narxi:* ${selectedP.price} so'm%0A🎨 *Rangi:* ${color}%0A📏 *O'lchami:* ${size}%0A💳 *To'lov:* ${type}`;
-        window.location.href = `https://t.me/Ruslanbek20119?text=${text}`;
+        const text = `🚀 Yangi buyurtma!\n\n📦 Mahsulot: ${selectedP.name}\n💰 Narxi: ${selectedP.price} so'm\n🎨 Rangi: ${color}\n📏 O'lchami: ${size}\n💳 To'lov: ${type}`;
+        
+        // Avto javob ko'rsatish
+        tg.showAlert("Rahmat! Buyurtmangiz qabul qilindi. Tez orada admin bog'lanadi.");
+        
+        window.location.href = `https://t.me/Ruslanbek20119?text=${encodeURIComponent(text)}`;
+        closeModal();
+    }
+
+    function sendContact() {
+        const msg = document.getElementById('contact-msg').value;
+        if(msg.trim() === "") return tg.showAlert("Xabarni yozing!");
+        
+        tg.showAlert("Xabaringiz yuborildi! Admin tez orada javob beradi.");
+        window.location.href = `https://t.me/Ruslanbek20119?text=${encodeURIComponent("📝 MUROJAAT:\n" + msg)}`;
+        closeModal();
     }
 
     renderProducts(products);
 </script>
-
 </body>
 </html>
