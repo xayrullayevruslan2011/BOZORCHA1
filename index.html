@@ -6,7 +6,7 @@
     <title>Ruslan Market | Karta bilan To'lov</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --main: #7f46f0; --orange: #ff9800; }
+        :root { --main: #7f46f0; --orange: #ff9800; --green: #28a745; --blue: #007bff; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; padding-bottom: 80px; }
         #auth-page { position: fixed; inset: 0; background: #fff; z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .auth-card { width: 100%; max-width: 320px; text-align: center; }
@@ -24,8 +24,6 @@
         .active { color: var(--main); font-weight: bold; }
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; align-items: flex-end; }
         .modal-content { background: #fff; width: 100%; padding: 25px; border-radius: 20px 20px 0 0; text-align: center; box-sizing: border-box; }
-        
-        /* Karta dizayni */
         .card-box { background: #f3f0ff; border: 1px dashed var(--main); padding: 10px; border-radius: 12px; margin: 10px 0; }
         .status-box { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--orange); text-align: left; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     </style>
@@ -58,13 +56,11 @@
     <div class="modal-content">
         <h3 id="m-title"></h3>
         <p id="m-price" style="font-size: 20px; color: var(--main); font-weight: bold;"></p>
-        
         <div class="card-box">
             <small>To'lov uchun karta (Humo):</small><br>
             <b id="card-num">4073420067355457</b>
             <button onclick="copyCard()" style="font-size:10px; margin-left:5px; cursor:pointer;">Nusxa</button>
         </div>
-
         <select id="p-size" class="inp"></select>
         <input type="text" id="promo-code" class="inp" placeholder="Promokod (RUSLAN...)" oninput="checkPromo()">
         <button onclick="sendOrder()" style="background:#28a745; color:white;" class="btn-reg">To'lovni tasdiqlash</button>
@@ -151,16 +147,35 @@
     function sendOrder() {
         const user = JSON.parse(localStorage.getItem('ruslan_user'));
         const total = selectedP.finalPrice || selectedP.rawPrice;
-        localStorage.setItem('my_order', JSON.stringify({name: selectedP.name, date: Date.now(), status: "waiting"}));
+        localStorage.setItem('my_order', JSON.stringify({name: selectedP.name, date: Date.now()}));
         const text = `💳 TO'LOV QILINDI\n📦: ${selectedP.name}\n💰: ${total} so'm\n📏: ${document.getElementById('p-size').value}\n👤: ${user.name}\n📞: ${user.phone}\n\n(Iltimos, tekshirib tasdiqlang!)`;
         window.location.href = `https://t.me/Ruslanbek20119?text=${encodeURIComponent(text)}`;
     }
+    
+    // YANGILANGAN STATUS FUNKSIYASI
     function updateStatus() {
         const order = JSON.parse(localStorage.getItem('my_order'));
         const container = document.getElementById('order-status-list');
         if(!order) { container.innerHTML = "<p style='text-align:center;'>Buyurtma yo'q</p>"; return; }
-        container.innerHTML = `<div class="status-box"><b>${order.name}</b><br><span style="color:var(--orange);">⏳ Kutilmoqda...</span><br><small>To'lov tekshirilgach yo'lga chiqadi.</small></div>`;
+        
+        const farqMinut = Math.floor((Date.now() - order.date) / (1000 * 60));
+        let st, rang, belgi;
+
+        if (farqMinut < 120) { // 2 soatgacha
+            st = "To'lov tekshirilmoqda..."; rang = "var(--orange)"; belgi = "⏳";
+        } else if (farqMinut >= 120 && farqMinut < 4320) { // 2 soatdan 3 kungacha
+            st = "Tasdiqlandi. Xitoydan yo'lga chiqdi 🇨🇳"; rang = "var(--green)"; belgi = "🚀";
+        } else { // 3 kundan keyin
+            st = "O'zbekistonga kelmoqda 🇺🇿"; rang = "var(--blue)"; belgi = "🚛";
+        }
+
+        container.innerHTML = `<div class="status-box" style="border-left: 5px solid ${rang};">
+            <b>${order.name}</b><br>
+            <span style="color:${rang}; font-weight:bold;">${belgi} ${st}</span><br>
+            <small style="color:#888;">Buyurtma vaqti: ${new Date(order.date).toLocaleString()}</small>
+        </div>`;
     }
+
     function showPage(p, b) {
         document.getElementById('shop-page').style.display = p === 'shop' ? 'block' : 'none';
         document.getElementById('orders-page').style.display = p === 'orders' ? 'block' : 'none';
