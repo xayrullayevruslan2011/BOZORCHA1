@@ -135,15 +135,23 @@
         document.getElementById('order-modal').style.display = 'flex';
     }
     function copyCard() { navigator.clipboard.writeText(document.getElementById('card-num').innerText); tg.showAlert("Nusxalandi!"); }
+    
     function checkPromo() {
         const val = document.getElementById('promo-code').value.toUpperCase();
+        // Har qanday belgidan tozalab faqat sonni olamiz
+        let p = parseInt(selectedP.rawPrice.replace(/\D/g, ''));
+
         if(val.startsWith("RUSLAN") && val.length > 6) {
-            let p = parseInt(selectedP.rawPrice.replace(/,/g, ''));
-            let d = Math.round(p * 0.75);
-            document.getElementById('m-price').innerHTML = `<del style="color:red;">${selectedP.rawPrice}</del> ${d.toLocaleString()} so'm`;
-            selectedP.finalPrice = d.toLocaleString();
-        } else { document.getElementById('m-price').innerText = selectedP.rawPrice + " so'm"; delete selectedP.finalPrice; }
+            let d = Math.round(p * 0.75); // 25% chegirma
+            let formatted = d.toLocaleString(); // Mingliklarni ajratish (000 qo'shish)
+            document.getElementById('m-price').innerHTML = `<del style="color:red; font-size:15px;">${selectedP.rawPrice}</del> ${formatted} so'm`;
+            selectedP.finalPrice = formatted;
+        } else { 
+            document.getElementById('m-price').innerText = selectedP.rawPrice + " so'm"; 
+            delete selectedP.finalPrice; 
+        }
     }
+
     function sendOrder() {
         const user = JSON.parse(localStorage.getItem('ruslan_user'));
         const total = selectedP.finalPrice || selectedP.rawPrice;
@@ -157,45 +165,66 @@
         const container = document.getElementById('order-status-list');
         if(!order) { container.innerHTML = "<p style='text-align:center;'>Buyurtma yo'q</p>"; return; }
         
-        // Agar bekor qilingan bo'lsa
         if(order.status === "rejected") {
             container.innerHTML = `<div class="status-box" style="border-left: 5px solid red;">
                 <b>${order.name}</b><br>
                 <span style="color:red; font-weight:bold;">❌ To'lov tasdiqlanmadi</span><br>
-                <small>To'lovda xatolik aniqlandi. Iltimos, qaytadan urinib ko'ring.</small><br><br>
-                <button onclick="localStorage.removeItem('my_order'); showPage('shop', document.querySelector('.nav-item'))" style="background:red; color:white; border:none; padding:8px; border-radius:8px; font-size:12px;">Qaytadan buyurtma berish</button>
+                <small>Admin to'lovni rad etdi. Iltimos, qaytadan buyurtma bering.</small><br><br>
+                <button onclick="localStorage.removeItem('my_order'); showPage('shop', document.querySelectorAll('.nav-item')[0])" style="background:red; color:white; border:none; padding:8px; border-radius:8px;">Qaytadan buyurtma berish</button>
+            </div>`;
+            return;
+        }
+
+        if(order.status === "confirmed") {
+            container.innerHTML = `<div class="status-box" style="border-left: 5px solid var(--green);">
+                <b>${order.name}</b><br>
+                <span style="color:var(--green); font-weight:bold;">🚀 Tasdiqlandi. Xitoydan yo'lga chiqdi 🇨🇳</span><br>
+                <small style="color:#888;">Buyurtma vaqti: ${new Date(order.date).toLocaleString()}</small>
             </div>`;
             return;
         }
 
         const farqMinut = Math.floor((Date.now() - order.date) / (1000 * 60));
         let st, rang, belgi;
-
-        if (farqMinut < 120) {
-            st = "To'lov tekshirilmoqda..."; rang = "var(--orange)"; belgi = "⏳";
-        } else if (farqMinut >= 120 && farqMinut < 4320) {
-            st = "Tasdiqlandi. Xitoydan yo'lga chiqdi 🇨🇳"; rang = "var(--green)"; belgi = "🚀";
-        } else {
-            st = "O'zbekistonga kelmoqda 🇺🇿"; rang = "var(--blue)"; belgi = "🚛";
-        }
+        if (farqMinut < 120) { st = "To'lov tekshirilmoqda..."; rang = "var(--orange)"; belgi = "⏳"; }
+        else if (farqMinut >= 120 && farqMinut < 4320) { st = "Tasdiqlandi. Xitoydan yo'lga chiqdi 🇨🇳"; rang = "var(--green)"; belgi = "🚀"; }
+        else { st = "O'zbekistonga kelmoqda 🇺🇿"; rang = "var(--blue)"; belgi = "🚛"; }
 
         container.innerHTML = `<div class="status-box" style="border-left: 5px solid ${rang};">
             <b>${order.name}</b><br>
             <span style="color:${rang}; font-weight:bold;">${belgi} ${st}</span><br>
             <small style="color:#888;">Buyurtma vaqti: ${new Date(order.date).toLocaleString()}</small>
-            <div style="margin-top:10px; border-top:1px solid #eee; padding-top:5px;">
-                <p style="font-size:10px; margin:0; color:#999;">Admin "To'lov tushmadi" dedimi?</p>
-                <button onclick="rejectMyOrder()" style="background:none; border:1px solid red; color:red; font-size:10px; padding:2px 5px; border-radius:4px; cursor:pointer;">Xatolikni bildirish</button>
+            
+            <div style="margin-top:15px; background:#f0f0f0; padding:10px; border-radius:8px; border: 1px solid #ddd;">
+                <p style="font-size:10px; margin:0 0 5px 0; color:#444;"><b>Admin uchun boshqaruv:</b></p>
+                <input type="text" id="admin-code-input" placeholder="Kodni kiriting..." style="width:60%; padding:6px; font-size:11px; border:1px solid #ccc; border-radius:4px;">
+                <button onclick="checkAdminCode()" style="padding:7px; font-size:10px; background:var(--main); color:white; border:none; border-radius:4px; cursor:pointer;">OK</button>
+                <div style="margin-top:5px; font-size:9px; color:#666;">
+                    Tasdiqlash: <b>OK777</b> | Rad etish: <b>XATO777</b>
+                </div>
             </div>
         </div>`;
     }
 
-    function rejectMyOrder() {
-        if(confirm("To'lov tasdiqlanmadi holatiga o'tkazilsinmi?")) {
-            let order = JSON.parse(localStorage.getItem('my_order'));
+    function checkAdminCode() {
+        const codeInput = document.getElementById('admin-code-input');
+        const code = codeInput.value.toUpperCase();
+        let order = JSON.parse(localStorage.getItem('my_order'));
+        
+        if(code === "XATO777") {
             order.status = "rejected";
             localStorage.setItem('my_order', JSON.stringify(order));
+            tg.showAlert("To'lov rad etildi!");
             updateStatus();
+        } 
+        else if(code === "OK777") {
+            order.status = "confirmed";
+            localStorage.setItem('my_order', JSON.stringify(order));
+            tg.showAlert("To'lov muvaffaqiyatli tasdiqlandi!");
+            updateStatus();
+        } 
+        else {
+            tg.showAlert("Noto'g'ri kod kiritildi!");
         }
     }
 
