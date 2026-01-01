@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ruslan Market | 40 Mahsulot</title>
+    <title>Ruslan Market | Karta bilan To'lov</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --main: #7f46f0; }
+        :root { --main: #7f46f0; --orange: #ff9800; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; padding-bottom: 80px; }
         #auth-page { position: fixed; inset: 0; background: #fff; z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .auth-card { width: 100%; max-width: 320px; text-align: center; }
@@ -24,7 +24,10 @@
         .active { color: var(--main); font-weight: bold; }
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; align-items: flex-end; }
         .modal-content { background: #fff; width: 100%; padding: 25px; border-radius: 20px 20px 0 0; text-align: center; box-sizing: border-box; }
-        .status-box { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--main); text-align: left; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        
+        /* Karta dizayni */
+        .card-box { background: #f3f0ff; border: 1px dashed var(--main); padding: 10px; border-radius: 12px; margin: 10px 0; }
+        .status-box { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--orange); text-align: left; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
@@ -40,10 +43,7 @@
 
 <header><b>RUSLAN MARKET</b></header>
 
-<div id="shop-page">
-    <div class="container" id="product-list"></div>
-</div>
-
+<div id="shop-page"><div class="container" id="product-list"></div></div>
 <div id="orders-page" style="display:none; padding: 20px;">
     <h3>📦 Buyurtmalarim</h3>
     <div id="order-status-list"></div>
@@ -58,6 +58,13 @@
     <div class="modal-content">
         <h3 id="m-title"></h3>
         <p id="m-price" style="font-size: 20px; color: var(--main); font-weight: bold;"></p>
+        
+        <div class="card-box">
+            <small>To'lov uchun karta (Humo):</small><br>
+            <b id="card-num">4073420067355457</b>
+            <button onclick="copyCard()" style="font-size:10px; margin-left:5px; cursor:pointer;">Nusxa</button>
+        </div>
+
         <select id="p-size" class="inp"></select>
         <input type="text" id="promo-code" class="inp" placeholder="Promokod (RUSLAN...)" oninput="checkPromo()">
         <button onclick="sendOrder()" style="background:#28a745; color:white;" class="btn-reg">To'lovni tasdiqlash</button>
@@ -70,12 +77,11 @@
 
     function up25(p) { return Math.round(p * 1.25).toLocaleString(); }
 
-    // 40 TA MAHSULOT RO'YXATI - SHU YERNI O'ZGARTIRASIZ
     const products = [
         {name: "Qishki Kurtka Premium", price: 200000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=70951574663cbae2ac73b1f8a4f8a2ea3c06527a-9099023-images-thumbs&n=13"},
         {name: "Nike Air Max 270", price: 280000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=f1e7218c18bd5095bc3e5696f25fb4348235580a-4322265-images-thumbs&n=13"},
         {name: "Polo Dvoyka", price: 150000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=b8b693d50f4c2381d985a1c8f33d3cb0be4ca464-4027983-images-thumbs&n=13"},
-        {name: "Klassik Shim", price: 990000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=410b6c32f91f6361a156b6f65a31f0c6d4faaf6f-5235890-images-thumbs&n=13"},
+        {name: "Klassik Shim", price: 99000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=410b6c32f91f6361a156b6f65a31f0c6d4faaf6f-5235890-images-thumbs&n=13"},
         {name: "Tufli Charm", price: 100000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=a0fe76efd8801116ec5dfd344f6f904cf2b54d3d-5236416-images-thumbs&n=13"},
         {name: "Hudi Oversize", price: 130000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=0820d25df2e30ed233e70414ddf08a298e916183-5307529-images-thumbs&n=13"},
         {name: "Adidas Yeezy", price: 200000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=30787d09a791c5c4c45821dd2120c2d8463c1ce0-5235999-images-thumbs&n=13"},
@@ -114,32 +120,13 @@
         {name: "Charm Qo'lqop", price: 55000, type: "other", img: "https://avatars.mds.yandex.net/i?id=c327df75519325dabc72349597d1129978a636c8-4577841-images-thumbs&n=13"}
     ];
 
-    window.onload = function() {
-        if (!localStorage.getItem('ruslan_user')) document.getElementById('auth-page').style.display = 'flex';
-        renderProducts();
-    }
-
+    window.onload = () => { if (!localStorage.getItem('ruslan_user')) document.getElementById('auth-page').style.display = 'flex'; renderProducts(); }
     function saveUser() {
         const name = document.getElementById('reg-name').value;
         const phone = document.getElementById('reg-phone').value;
-        if (name.length > 2 && phone.length > 6) {
-            localStorage.setItem('ruslan_user', JSON.stringify({name, phone}));
-            document.getElementById('auth-page').style.display = 'none';
-        } else { tg.showAlert("Ism va raqamni kiriting!"); }
+        if (name.length > 2 && phone.length > 6) { localStorage.setItem('ruslan_user', JSON.stringify({name, phone})); document.getElementById('auth-page').style.display = 'none'; }
     }
-
-    function renderProducts() {
-        document.getElementById('product-list').innerHTML = products.map(p => `
-            <div class="card" onclick="openOrder('${p.name}', '${up25(p.price)}', '${p.type}')">
-                <img src="${p.img}">
-                <div class="p-info">
-                    <div class="title"><b>${p.name}</b></div>
-                    <div class="price">${up25(p.price)} so'm</div>
-                </div>
-            </div>
-        `).join('');
-    }
-
+    function renderProducts() { document.getElementById('product-list').innerHTML = products.map(p => `<div class="card" onclick="openOrder('${p.name}', '${up25(p.price)}', '${p.type}')"><img src="${p.img}"><div class="p-info"><div class="title"><b>${p.name}</b></div><div class="price">${up25(p.price)} so'm</div></div></div>`).join(''); }
     let selectedP = {};
     function openOrder(name, price, type) {
         selectedP = {name, price, rawPrice: price};
@@ -151,45 +138,35 @@
         else s.innerHTML = "<option>Standart</option>";
         document.getElementById('order-modal').style.display = 'flex';
     }
-
+    function copyCard() { navigator.clipboard.writeText(document.getElementById('card-num').innerText); tg.showAlert("Nusxalandi!"); }
     function checkPromo() {
         const val = document.getElementById('promo-code').value.toUpperCase();
         if(val.startsWith("RUSLAN") && val.length > 6) {
             let p = parseInt(selectedP.rawPrice.replace(/,/g, ''));
             let d = Math.round(p * 0.75);
-            document.getElementById('m-price').innerHTML = `<del style="color:red; font-size:14px;">${selectedP.rawPrice}</del> ${d.toLocaleString()} so'm`;
+            document.getElementById('m-price').innerHTML = `<del style="color:red;">${selectedP.rawPrice}</del> ${d.toLocaleString()} so'm`;
             selectedP.finalPrice = d.toLocaleString();
-        } else {
-            document.getElementById('m-price').innerText = selectedP.rawPrice + " so'm";
-            delete selectedP.finalPrice;
-        }
+        } else { document.getElementById('m-price').innerText = selectedP.rawPrice + " so'm"; delete selectedP.finalPrice; }
     }
-
     function sendOrder() {
         const user = JSON.parse(localStorage.getItem('ruslan_user'));
         const total = selectedP.finalPrice || selectedP.rawPrice;
-        localStorage.setItem('my_order', JSON.stringify({name: selectedP.name, date: Date.now()}));
-        const text = `💳 TO'LOV\n📦: ${selectedP.name}\n💰: ${total} so'm\n📏: ${document.getElementById('p-size').value}\n👤: ${user.name}\n📞: ${user.phone}`;
+        localStorage.setItem('my_order', JSON.stringify({name: selectedP.name, date: Date.now(), status: "waiting"}));
+        const text = `💳 TO'LOV QILINDI\n📦: ${selectedP.name}\n💰: ${total} so'm\n📏: ${document.getElementById('p-size').value}\n👤: ${user.name}\n📞: ${user.phone}\n\n(Iltimos, tekshirib tasdiqlang!)`;
         window.location.href = `https://t.me/Ruslanbek20119?text=${encodeURIComponent(text)}`;
     }
-
     function updateStatus() {
         const order = JSON.parse(localStorage.getItem('my_order'));
         const container = document.getElementById('order-status-list');
         if(!order) { container.innerHTML = "<p style='text-align:center;'>Buyurtma yo'q</p>"; return; }
-        const diff = Math.floor((Date.now() - order.date) / (1000 * 60 * 60 * 24));
-        let st = diff >= 6 ? "O'zbekistonda 🇺🇿" : diff >= 3 ? "Chegarada 🛂" : "Xitoydan yuborildi 🇨🇳";
-        container.innerHTML = `<div class="status-box"><b>${order.name}</b><br>Holati: ${st}</div>`;
+        container.innerHTML = `<div class="status-box"><b>${order.name}</b><br><span style="color:var(--orange);">⏳ Kutilmoqda...</span><br><small>To'lov tekshirilgach yo'lga chiqadi.</small></div>`;
     }
-
     function showPage(p, b) {
         document.getElementById('shop-page').style.display = p === 'shop' ? 'block' : 'none';
         document.getElementById('orders-page').style.display = p === 'orders' ? 'block' : 'none';
         document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
-        b.classList.add('active');
-        if(p === 'orders') updateStatus();
+        b.classList.add('active'); if(p === 'orders') updateStatus();
     }
-
     function closeModal() { document.getElementById('order-modal').style.display='none'; }
 </script>
 </body>
