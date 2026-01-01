@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ruslan Market | 30 Mahsulot</title>
+    <title>Ruslan Market | 21 Mahsulot</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --main: #7f46f0; }
@@ -21,22 +21,21 @@
         .price { color: var(--main); font-weight: bold; font-size: 15px; }
         .title { font-size: 13px; margin: 5px 0; height: 32px; overflow: hidden; font-weight: 500; }
 
-        /* Pastki menyu */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #ddd; z-index: 1000; }
         .nav-item { border: none; background: none; font-size: 12px; cursor: pointer; color: #666; display: flex; flex-direction: column; align-items: center; gap: 4px; }
         .nav-item.active { color: var(--main); font-weight: bold; }
 
-        /* Modallar */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: flex-end; }
-        .modal-content { background: #fff; width: 100%; padding: 25px; border-radius: 25px 25px 0 0; animation: slideUp 0.3s ease-out; box-sizing: border-box; text-align: center; }
+        .modal-content { background: #fff; width: 100%; padding: 25px; border-radius: 25px 25px 0 0; animation: slideUp 0.3s ease-out; box-sizing: border-box; text-align: center; max-height: 90vh; overflow-y: auto; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
         .select-box { margin-bottom: 15px; text-align: left; }
         select, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #ddd; background: #f9f9f9; font-family: inherit; }
         .btn-pay { border: none; width: 100%; padding: 15px; border-radius: 12px; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 10px; color: #fff; }
         .btn-100 { background: #28a745; }
-        .btn-50 { background: #007bff; }
         .btn-close { background: none; color: #999; margin-top: 10px; }
+        
+        .card-box { background: #f3f0ff; border: 1px dashed var(--main); padding: 12px; border-radius: 12px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
@@ -53,14 +52,12 @@
 <div id="info-page" style="display:none; padding: 30px 20px; text-align: center;">
     <div style="background: var(--main); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 30px; font-weight: bold;">R</div>
     <h3>Ruslan Market haqida</h3>
-    <p style="line-height: 1.6; color: #666;">Assalomu alaykum! Bizning do'konimiz orqali siz eng sifatli kiyimlar va aksessuarlarni buyurtma qilishingiz mumkin. <br><br> <b>Manzil:</b> Navoiy viloyati<br><b>Yetkazib berish:</b> 10 kun ichida.</p>
-    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-    <p>Savollaringiz bo'lsa, "Murojaat" bo'limi orqali yozing.</p>
+    <p style="line-height: 1.6; color: #666;">Assalomu alaykum! Bizning do'konimiz orqali eng sifatli mahsulotlarni hamyonbop narxlarda xarid qilishingiz mumkin.<br><br><b>Manzil:</b> Navoiy viloyati<br><b>Yetkazib berish:</b> 10 kun ichida.</p>
 </div>
 
 <div class="bottom-nav">
     <button class="nav-item active" onclick="showPage('shop', this)"><span>🛍</span>Do'kon</button>
-    <button class="nav-item" onclick="showPage('info', this)"><span>ℹ️</span>Men haqimda</button>
+    <button class="nav-item" onclick="showPage('info', this)"><span>ℹ️</span>Haqida</button>
     <button class="nav-item" onclick="openContact()"><span>✍️</span>Murojaat</button>
 </div>
 
@@ -68,14 +65,21 @@
     <div class="modal-content">
         <h3 id="m-title" style="margin:0 0 10px 0;"></h3>
         <p id="m-price" style="color: var(--main); font-weight: bold; font-size: 20px;"></p>
+        
+        <div class="card-box">
+            <small style="color: #666; display: block; margin-bottom: 5px;">To'lov uchun karta (Humo):</small>
+            <b id="card-num" style="font-size: 17px; letter-spacing: 1px;">4073420067355457</b>
+            <button onclick="copyCard()" style="background: var(--main); border: none; color: white; padding: 5px 10px; border-radius: 8px; font-size: 11px; margin-left: 10px; cursor: pointer;">Nusxalash</button>
+        </div>
+
         <div class="select-box">
             <select id="p-color"><option>Qora</option><option>Oq</option><option>Ko'k</option><option>Jigarrang</option></select>
         </div>
         <div class="select-box">
-            <select id="p-size"><option>S (38-40)</option><option>M (42-44)</option><option>L (46-48)</option><option>XL (50-52)</option><option>Standart</option></select>
+            <select id="p-size"><option>S</option><option>M</option><option>L</option><option>XL</option><option>Standart</option></select>
         </div>
-        <button class="btn-pay btn-100" onclick="send('100%')">100% To'lov bilan xarid qilish</button>
-        <button class="btn-pay btn-50" onclick="send('50%')">50% Oldindan to'lov</button>
+
+        <button class="btn-pay btn-100" onclick="sendOrder()">To'lov qildim (Chek yuborish)</button>
         <button class="btn-pay btn-close" onclick="closeModal()">Yopish</button>
     </div>
 </div>
@@ -106,8 +110,15 @@
         {name: "Real Madrid futbolka", price: "89,000", img: "https://avatars.mds.yandex.net/i?id=91dd766c7da0e17bca09609db0d0ff523bb867ee-5646461-images-thumbs&n=13"},
         {name: "Neymar butsisi", price: "190,000", img: "https://avatars.mds.yandex.net/i?id=20e41b813f6af64a137d2fab979591ef66dee885-4395422-images-thumbs&n=13"},
         {name: "Cristiano kitobi", price: "200,000", img: "https://avatars.mds.yandex.net/i?id=dfef5ae0ec768157281bd829026de5ce389aa7d0-5429318-images-thumbs&n=13"},
+        {name: "Palto (qizlar)", price: "300,000", img: "https://avatars.mds.yandex.net/i?id=a7efa429cbcef6e3bebf90a892e8ae1aeb506f06-5222634-images-thumbs&n=13"},
+        {name: "Etik (erkaklar)", price: "140,000", img: "https://avatars.mds.yandex.net/i?id=536c1a2fa86776ba13eb7759d8c89fadfc36c88f-5889153-images-thumbs&n=13"},
         {name: "Sumka Dior", price: "195,000", img: "https://avatars.mds.yandex.net/i?id=c2550d25a95e3ee5f3a34d4f7e3dcde48a249936-5527422-images-thumbs&n=13"},
-        {name: "Seyf (xavfsiz)", price: "285,000", img: "https://avatars.mds.yandex.net/i?id=4086128733f66473ccc301049041a628d0e88add-9589172-images-thumbs&n=13"}
+        {name: "Krasovka ayollar", price: "75,000", img: "https://avatars.mds.yandex.net/i?id=cc77aac32bc122a736dc13a1b828d12e0c2a0aa6-6947220-images-thumbs&n=13"},
+        {name: "Naushnik", price: "55,000", img: "https://avatars.mds.yandex.net/i?id=fa34a753fa7b6e22f35e3b12b89431a7facc3afc-5496468-images-thumbs&n=13"},
+        {name: "Qo'lsoat Luxury", price: "40,000", img: "https://avatars.mds.yandex.net/i?id=bb0fa29d0b0dfe7caeba9343ec0f973563003688-12627675-images-thumbs&n=13"},
+        {name: "Bryuk Italianskiy", price: "110,000", img: "https://avatars.mds.yandex.net/i?id=9a57bb0276256569a622723951453df5169f24b1-4569449-images-thumbs&n=13"},
+        {name: "Ruchka 1 pachka", price: "14,000", img: "https://avatars.mds.yandex.net/i?id=b6d381f7b9486987eb7ebc20f9ba5f6c-5336269-images-thumbs&n=13"},
+        {name: "Seyf xavfsiz", price: "285,000", img: "https://avatars.mds.yandex.net/i?id=4086128733f66473ccc301049041a628d0e88add-9589172-images-thumbs&n=13"}
     ];
 
     let selectedP = {};
@@ -146,20 +157,23 @@
         tg.HapticFeedback.impactOccurred('medium');
     }
 
-    function openContact() { document.getElementById('contact-modal').style.display = 'flex'; }
+    function copyCard() {
+        const card = "4073420067355457";
+        navigator.clipboard.writeText(card);
+        tg.showAlert("Karta raqami nusxalandi!");
+    }
+
     function closeModal() { 
         document.getElementById('order-modal').style.display = 'none'; 
         document.getElementById('contact-modal').style.display = 'none'; 
     }
 
-    function send(type) {
+    function sendOrder() {
         const color = document.getElementById('p-color').value;
         const size = document.getElementById('p-size').value;
-        const text = `🚀 Yangi buyurtma!\n\n📦 Mahsulot: ${selectedP.name}\n💰 Narxi: ${selectedP.price} so'm\n🎨 Rangi: ${color}\n📏 O'lchami: ${size}\n💳 To'lov: ${type}`;
+        const text = `💳 TO'LOV QILINDI\n\n📦 Mahsulot: ${selectedP.name}\n💰 Narxi: ${selectedP.price} so'm\n🎨 Rangi: ${color}\n📏 O'lchami: ${size}\n\n⚠️ Iltimos, to'lov chekini (rasmini) shu yerga yuboring!`;
         
-        // Avto javob ko'rsatish
-        tg.showAlert("Rahmat! Buyurtmangiz qabul qilindi. Tez orada admin bog'lanadi.");
-        
+        tg.showAlert("Rahmat! Endi iltimos, to'lov chekini rasm ko'rinishida botga yuboring.");
         window.location.href = `https://t.me/Ruslanbek20119?text=${encodeURIComponent(text)}`;
         closeModal();
     }
@@ -167,8 +181,6 @@
     function sendContact() {
         const msg = document.getElementById('contact-msg').value;
         if(msg.trim() === "") return tg.showAlert("Xabarni yozing!");
-        
-        tg.showAlert("Xabaringiz yuborildi! Admin tez orada javob beradi.");
         window.location.href = `https://t.me/Ruslanbek20119?text=${encodeURIComponent("📝 MUROJAAT:\n" + msg)}`;
         closeModal();
     }
