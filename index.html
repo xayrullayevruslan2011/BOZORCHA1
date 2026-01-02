@@ -167,13 +167,15 @@
     ];
 
     let user = JSON.parse(localStorage.getItem('ruslan_v4')) || null;
+    
+    // EHTIMOLLIKLAR (WEIGHT): 10%ga eng katta og'irlik berildi
     const sectors = [
-        {label: "10%", color: "#FFCC00", weight: 30},
-        {label: "20%", color: "#FF9900", weight: 25},
-        {label: "30%", color: "#7f46f0", weight: 20},
-        {label: "40%", color: "#28a745", weight: 14},
-        {label: "50%", color: "#dc3545", weight: 10},
-        {label: "PRINTER", color: "#000000", weight: 1}
+        {label: "10%", color: "#FFCC00", weight: 85}, // 85% imkoniyat
+        {label: "20%", color: "#FF9900", weight: 10}, // 10% imkoniyat
+        {label: "30%", color: "#7f46f0", weight: 2},  // 2% imkoniyat
+        {label: "40%", color: "#28a745", weight: 1},  // 1% imkoniyat
+        {label: "50%", color: "#dc3545", weight: 1},  // 1% imkoniyat
+        {label: "PRINTER", color: "#000000", weight: 1} // 1% imkoniyat
     ];
 
     window.onload = () => {
@@ -230,6 +232,7 @@
         document.getElementById('spin-btn').disabled = true;
         user.chances--; updateChances();
 
+        // Ehtimollik asosida yutuqni tanlash
         const rand = Math.random() * 100;
         let cum = 0, winIdx = 0;
         for(let i=0; i<sectors.length; i++) {
@@ -237,12 +240,15 @@
             if(rand <= cum) { winIdx = i; break; }
         }
 
-        // To'g'ri burchakni hisoblash (Chalkashliksiz)
+        // Barabanni aylantirish mantiqi (CHALKASHLIKSIZ)
         const sectorAngle = 360 / sectors.length;
         const extraDeg = 3600; // 10 marta aylanish
-        const targetDeg = extraDeg + (sectors.length - winIdx) * sectorAngle - (sectorAngle/2);
+        // winIdx - bu massivdagi tartibi. Canvas soat yo'nalishi bo'yicha chizadi.
+        // Bizga ko'rsatkich (tepada) turgan joyga winIdx kelishi kerak.
+        const targetDeg = extraDeg + (360 - (winIdx * sectorAngle) - (sectorAngle/2));
         
-        document.getElementById('canvas').style.transform = `rotate(${targetDeg}deg)`;
+        const canvasEl = document.getElementById('canvas');
+        canvasEl.style.transform = `rotate(${targetDeg}deg)`;
 
         setTimeout(() => {
             const win = sectors[winIdx];
@@ -286,7 +292,7 @@
     }
 
     function sendOrder() {
-        user.chances += 1; // Har bir xarid uchun imkoniyat
+        user.chances += 1; 
         user.promo = null;
         localStorage.setItem('ruslan_v4', JSON.stringify(user));
         const text = `YANGI BUYURTMA 🛍\n\nMahsulot: ${selectedItem.name}\nNarxi: ${selectedItem.price.toLocaleString()} so'm\nO'lcham: ${document.getElementById('p-size').value}\n\n👤 Mijoz: ${user.name}\n📞 Tel: ${user.phone}\n📍 Hudud: ${user.region}`;
