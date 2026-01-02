@@ -3,105 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ruslan Market | Premium Wheel</title>
+    <title>Ruslan Market | Premium Wheel & 40 Products</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --main: #7f46f0; --bg: #f4f5f7; --white: #ffffff; --gray: #8b8e99; --text: #1f2026; --orange: #ff9800; --red: #dc3545; --green: #28a745; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: var(--text); padding-bottom: 70px; overflow-x: hidden; }
         
-        /* Header & Pages */
         .header-search { background: var(--white); padding: 10px 15px; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #e5e7ea; }
         .search-box { background: #edeff2; border-radius: 10px; display: flex; align-items: center; padding: 8px 12px; }
         .search-box input { border: none; background: transparent; margin-left: 10px; width: 100%; outline: none; font-size: 14px; }
+
         .page { display: none; padding: 15px; animation: fadeIn 0.2s ease; }
         .active-page { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Grid & Cards */
         .container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .card { background: var(--white); border-radius: 12px; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .card { background: var(--white); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .card img { width: 100%; height: 160px; object-fit: cover; }
-        .p-info { padding: 10px; flex-grow: 1; }
-        .price { font-weight: bold; font-size: 15px; margin: 5px 0; color: var(--text); }
-        .title { font-size: 12px; color: #4d4e59; height: 32px; overflow: hidden; line-height: 1.3; }
+        .p-info { padding: 10px; }
+        .price { font-weight: bold; font-size: 15px; color: var(--main); }
+        .title { font-size: 12px; color: #4d4e59; height: 32px; overflow: hidden; margin-bottom: 5px; }
 
-        /* Navigation */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--white); display: flex; justify-content: space-around; padding: 8px 0; border-top: 1px solid #e5e7ea; z-index: 2000; }
-        .nav-item { border: none; background: none; color: var(--gray); display: flex; flex-direction: column; align-items: center; font-size: 10px; cursor: pointer; }
-        .nav-item i { font-size: 18px; margin-bottom: 4px; }
+        .nav-item { border: none; background: none; color: var(--gray); display: flex; flex-direction: column; align-items: center; font-size: 10px; }
         .nav-item.active { color: var(--main); }
 
-        /* Wheel Styles */
-        #wheel-wrapper { position: relative; width: 300px; height: 300px; margin: 20px auto; }
-        #canvas { width: 100%; height: 100%; transform: rotate(0deg); transition: transform 5s cubic-bezier(0.1, 0, 0.2, 1); }
-        .pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 30px; height: 30px; background: var(--red); clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 100; border: 2px solid white; }
-        .chance-badge { background: var(--main); color: white; padding: 5px 15px; border-radius: 20px; font-size: 12px; margin-bottom: 10px; display: inline-block; }
-
-        /* Modal */
+        /* Wheel */
+        #wheel-wrapper { position: relative; width: 280px; height: 280px; margin: 20px auto; }
+        #canvas { width: 100%; height: 100%; transition: transform 5s cubic-bezier(0.1, 0, 0.2, 1); }
+        .pointer { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 25px; height: 25px; background: red; clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 10; border: 2px solid white; }
+        
+        .promo-box { background: #e8f5e9; border: 1px dashed var(--green); padding: 10px; border-radius: 10px; margin: 10px 0; text-align: center; font-weight: bold; color: #2e7d32; }
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 3000; align-items: flex-end; }
-        .modal-content { background: var(--white); width: 100%; padding: 20px; border-radius: 20px 20px 0 0; box-sizing: border-box; }
-        .promo-box { background: #e8f5e9; border: 1px dashed var(--green); padding: 10px; border-radius: 8px; margin: 10px 0; text-align: center; color: var(--green); font-weight: bold; }
-        .btn-pay { width: 100%; padding: 15px; background: var(--main); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
+        .modal-content { background: var(--white); width: 100%; padding: 20px; border-radius: 20px 20px 0 0; }
     </style>
 </head>
 <body>
 
     <div id="auth-page" style="display: none; position: fixed; inset: 0; background: #fff; z-index: 5000; flex-direction: column; align-items: center; justify-content: center; padding: 20px;">
-        <h2 style="color: var(--main);">Xush kelibsiz!</h2>
+        <h2 style="color: var(--main);">Ro'yxatdan o'tish</h2>
         <input type="text" id="reg-name" style="width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd;" placeholder="Ismingiz">
-        <input type="tel" id="reg-phone" style="width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd;" placeholder="Telefon raqamingiz">
+        <input type="tel" id="reg-phone" style="width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd;" placeholder="Telefoningiz">
         <select id="reg-region" style="width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd;">
             <option value="">Hududni tanlang</option>
-            <option>Toshkent</option><option>Andijon</option><option>Farg'ona</option><option>Namangan</option>
-            <option>Samarqand</option><option>Buxoro</option><option>Xorazm</option><option>Surxondaryo</option>
-            <option>Qashqadaryo</option><option>Jizzax</option><option>Sirdaryo</option><option>Navoiy</option>
+            <option>Toshkent</option><option>Andijon</option><option>Farg'ona</option><option>Namangan</option><option>Samarqand</option><option>Buxoro</option><option>Xorazm</option><option>Surxondaryo</option><option>Qashqadaryo</option><option>Jizzax</option><option>Sirdaryo</option><option>Navoiy</option>
         </select>
-        <button onclick="saveUser()" style="width: 100%; padding: 15px; background: var(--main); color: #fff; border: none; border-radius: 12px; font-weight: bold;">Kirish</button>
+        <button onclick="saveUser()" style="width: 100%; padding: 15px; background: var(--main); color: #fff; border: none; border-radius: 12px; font-weight: bold;">Do'konga kirish</button>
     </div>
 
     <div class="header-search">
-        <div class="search-box"><i class="fa fa-search" style="color: var(--gray);"></i><input type="text" id="searchInput" oninput="filterProducts()" placeholder="Qidiruv..."></div>
+        <div class="search-box"><i class="fa fa-search"></i><input type="text" id="searchInput" oninput="filterProducts()" placeholder="Qidiruv..."></div>
     </div>
 
-    <div id="home" class="page active-page"><h3>Foyda xitlari</h3><div class="container" id="product-list"></div></div>
+    <div id="home" class="page active-page"><h3>Mahsulotlar</h3><div class="container" id="product-list"></div></div>
 
     <div id="lucky" class="page" style="text-align: center;">
         <h3>Omadli Baraban</h3>
-        <div class="chance-badge">Imkoniyatlaringiz: <span id="chance-count">0</span> ta</div>
-        <div id="wheel-wrapper">
-            <div class="pointer"></div>
-            <canvas id="canvas" width="300" height="300"></canvas>
-        </div>
-        <button id="spin-btn" onclick="spin()" style="padding: 15px 40px; background: var(--main); color: white; border: none; border-radius: 30px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 15px rgba(127,70,240,0.3);">AYLANTIRISH</button>
-        <p style="font-size: 12px; color: var(--gray); margin-top: 20px;">
-            🎁 Printercha yutish imkoniyati: 1% <br>
-            ➕ Odam qo'shsangiz yoki xarid qilsangiz imkoniyat ko'payadi!
-        </p>
+        <div style="background: var(--main); color: white; display: inline-block; padding: 5px 15px; border-radius: 20px; margin-bottom: 10px;">Imkoniyat: <span id="chance-count">0</span></div>
+        <div id="wheel-wrapper"><div class="pointer"></div><canvas id="canvas" width="300" height="300"></canvas></div>
+        <button id="spin-btn" onclick="spin()" style="width: 80%; padding: 15px; background: var(--orange); color: white; border: none; border-radius: 30px; font-weight: bold;">AYLANTIRISH</button>
+        <p style="font-size: 11px; color: gray; margin-top: 15px;">Printercha tushish imkoniyati 1%. Har bir xaridingiz uchun +1 imkoniyat!</p>
     </div>
 
-    <div id="cart" class="page">
-        <h3>Savat / Holat</h3>
-        <div id="order-status-list"></div>
-        <div id="cart-empty" style="text-align: center; margin-top: 50px;"><i class="fa fa-shopping-bag" style="font-size: 50px; color: #eee;"></i><p>Buyurtmalar yo'q</p></div>
-    </div>
+    <div id="cart" class="page"><h3>Mening buyurtmalarim</h3><div id="order-status-list"></div></div>
 
     <div class="bottom-nav">
-        <button class="nav-item active" onclick="openPage('home', this)"><i class="fa fa-house"></i><span>Bosh sahifa</span></button>
-        <button class="nav-item" onclick="openPage('lucky', this)"><i class="fa fa- DH-wheel"></i><i class="fa fa-clover"></i><span>Baraban</span></button>
+        <button class="nav-item active" onclick="openPage('home', this)"><i class="fa fa-house"></i><span>Asosiy</span></button>
+        <button class="nav-item" onclick="openPage('lucky', this)"><i class="fa fa-clover"></i><span>Baraban</span></button>
         <button class="nav-item" onclick="openPage('cart', this)"><i class="fa fa-bag-shopping"></i><span>Savat</span></button>
     </div>
 
     <div id="order-modal" class="modal" onclick="if(event.target==this) closeModal()">
         <div class="modal-content">
-            <h3 id="m-title"></h3>
+            <h3 id="m-title" style="margin-top:0;"></h3>
             <div id="promo-display" class="promo-box" style="display: none;"></div>
             <p id="m-price" style="font-size: 20px; color: var(--main); font-weight: bold;"></p>
-            <div style="background: #f3f0ff; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 10px;">
-                <small>Humo Karta:</small><br><b>4073420067355457</b><br><small>Gulzebo Xolboeva</small>
+            <div style="background: #f3f0ff; padding: 10px; border-radius: 10px; font-size: 14px; margin-bottom: 15px;">
+                💳 <b>4073420067355457</b><br>Gulzebo Xolboeva (Humo)
             </div>
             <select id="p-size" style="width:100%; padding:12px; border-radius:10px; border:1px solid #ddd; margin-bottom:15px;"></select>
-            <button class="btn-pay" onclick="sendOrder()">Tasdiqlash</button>
+            <button class="btn-pay" style="width: 100%; padding: 15px; background: var(--main); color: white; border: none; border-radius: 10px;" onclick="sendOrder()">Xaridni tasdiqlash</button>
         </div>
     </div>
 
@@ -110,11 +92,47 @@
     const products = [
         {name: "Qishki Kurtka Premium", price: 200000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=70951574663cbae2ac73b1f8a4f8a2ea3c06527a-9099023-images-thumbs&n=13"},
         {name: "Nike Air Max 270", price: 280000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=f1e7218c18bd5095bc3e5696f25fb4348235580a-4322265-images-thumbs&n=13"},
-        {name: "Printercha Smart", price: 150000, type: "other", img: "https://avatars.mds.yandex.net/i?id=4cbef11efd3ef5b256645f41bc7445940bd2f73f-10108411-images-thumbs&n=13"},
-        {name: "Polo Dvoyka", price: 150000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=b8b693d50f4c2381d985a1c8f33d3cb0be4ca464-4027983-images-thumbs&n=13"}
+        {name: "Polo Dvoyka", price: 150000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=b8b693d50f4c2381d985a1c8f33d3cb0be4ca464-4027983-images-thumbs&n=13"},
+        {name: "Klassik Shim", price: 99000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=410b6c32f91f6361a156b6f65a31f0c6d4faaf6f-5235890-images-thumbs&n=13"},
+        {name: "Tufli Charm", price: 100000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=a0fe76efd8801116ec5dfd344f6f904cf2b54d3d-5236416-images-thumbs&n=13"},
+        {name: "Hudi Oversize", price: 130000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=0820d25df2e30ed233e70414ddf08a298e916183-5307529-images-thumbs&n=13"},
+        {name: "Adidas Yeezy", price: 200000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=30787d09a791c5c4c45821dd2120c2d8463c1ce0-5235999-images-thumbs&n=13"},
+        {name: "suvarka aparat", price: 55000, type: "other", img: "https://avatars.mds.yandex.net/i?id=db3e3ea838e7139ba301d62bf81326cc1c84cb13-5279204-images-thumbs&n=13"},
+        {name: "Charm Remen", price: 70000, type: "other", img: "https://avatars.mds.yandex.net/i?id=cc3213e0ac2fa192d5d29ae8c4eaa636f2ab6545-5388624-images-thumbs&n=13"},
+        {name: "Rolex Watch", price: 350000, type: "other", img: "https://cdn1.ozone.ru/s3/multimedia-1-f/c600/7106545059.jpg"},
+        {name: "Dior Bag", price: 190000, type: "other", img: "https://avatars.mds.yandex.net/i?id=f79142412e9a9b7e9e096648252a9c5cb545eb72-9226797-images-thumbs&n=13"},
+        {name: "Zara Mokasina", price: 185000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=22d8abd1e0159833b74664f1e37e32232391a5fa-9152303-images-thumbs&n=13"},
+        {name: "Sportivka Nike", price: 210000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=4e2ad4cb6f8bb2148e1372db2b732f36aad9cf56-5334272-images-thumbs&n=13"},
+        {name: "Sviter Kashmir", price: 120000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=d09084e02bca0238a10123c4b8b63907c48a67fe-5876970-images-thumbs&n=13"},
+        {name: "etik detiskiy", price: 65000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=2de6a0abd6d4c21e0652d8d6ab8aa9b9ac5c3a3e-5088700-images-thumbs&n=13"},
+        {name: "Termos 1L", price: 35000, type: "other", img: "https://avatars.mds.yandex.net/i?id=cb19d8d4f51449e1d7b2f223701c0cceac170f06-5354769-images-thumbs&n=13"},
+        {name: "etik qizbolalarga", price: 45000, type: "other", img: "https://avatars.mds.yandex.net/i?id=09c35d96d8de2db1debbc11dd510bd89d1ac157c-5165563-images-thumbs&n=13"},
+        {name: "Slipper", price: 40000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=f7eca6059ad7eeb0fd7275ecb4ead8e1b1d3a394-16477287-images-thumbs&n=13"},
+        {name: "Paypoq (12 juft)", price: 45000, type: "other", img: "https://avatars.mds.yandex.net/i?id=e62cd2900f57009005890eca9965dd170b756b56-5233320-images-thumbs&n=13"},
+        {name: "Gucci Glasses", price: 125000, type: "other", img: "https://avatars.mds.yandex.net/i?id=79320094fd45192d98c11a4c562cf841230b4303-13095363-images-thumbs&n=13"},
+        {name: "Mayka Oq", price: 30000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=dea2ae40a8886506b1f6bcd5df7d8a09a16a4c8d-5083805-images-thumbs&n=13"},
+        {name: "Palto Klassik", price: 280000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=4b7e2423be88c3c91c2288bda8b7f530bed31428-11543356-images-thumbs&n=13"},
+        {name: "Grey Svitshot", price: 110000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=a52fa236d5e23058498f47845134381620076a0c-4817585-images-thumbs&n=13"},
+        {name: "Butsi CR7", price: 250000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=955f5a96ef0407a40036c57870d8a26858dc1de1-9147490-images-thumbs&n=13"},
+        {name: "Charm Kasholok", price: 60000, type: "other", img: "https://avatars.mds.yandex.net/i?id=c946c87f9186063f371d28edfd551675f5b367ee-12321292-images-thumbs&n=13"},
+        {name: "Jinsi Kurtka", price: 180000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=2806b3df83565217f518bc6d28669dd0b469da71-12346171-images-thumbs&n=13"},
+        {name: "Ayollar Tufli", price: 195000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=e2848e85ba6b48b1ae981456bd1625821b9bd0d8-9266608-images-thumbs&n=13"},
+        {name: "Shapka Sharf", price: 55000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=da6492ab1e012dfdb6f14d21e1e773014990bfc2-12323207-images-thumbs&n=13"},
+        {name: "Powerbank Mi", price: 120000, type: "other", img: "https://avatars.mds.yandex.net/i?id=d14c1345a79ae8b7cf5e0079f58dad7a46615c5d-4080206-images-thumbs&n=13"},
+        {name: "Real Madrid forma", price: 95000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=91dd766c7da0e17bca09609db0d0ff523bb867ee-5646461-images-thumbs&n=13"},
+        {name: "Velosiped 26", price: 600000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=ee2185a8c49748952fb1e3e616c44a156778aab5-5668729-images-thumbs&n=13"},
+        {name: "Kargo Shim", price: 155000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=527c6bf4959b7393e145d6331eb86d1997330a50-12190079-images-thumbs&n=13"},
+        {name: "Zontik", price: 50000, type: "other", img: "https://avatars.mds.yandex.net/i?id=f95de4ef87a20fd80cb0e69b943300478b24de5d-8236365-images-thumbs&n=13"},
+        {name: "Soch Fen", price: 100000, type: "other", img: "https://avatars.mds.yandex.net/i?id=cfb4f0cc27e67359417b63ee89935b1df007ce1e-5166135-images-thumbs&n=13"},
+        {name: "Printercha Smart", price: 95000, type: "other", img: "https://avatars.mds.yandex.net/i?id=4cbef11efd3ef5b256645f41bc7445940bd2f73f-10108411-images-thumbs&n=13"},
+        {name: "Fila Sneakers", price: 220000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=8234a6722a98b9f5722c181de9122965a81b52c0-5470361-images-thumbs&n=13"},
+        {name: "Quloqchin Air", price: 30000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=07095e2b6bb3c1258f1bbe260580632124a5c502-5115418-images-thumbs&n=13"},
+        {name: "Sandali", price: 80000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=e93e7e435d7594b6d12a37d39f75fdba38b22977-5642274-images-thumbs&n=13"},
+        {name: "Mafiya o'yini", price: 35000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=edef3ffbc286e535ca0aff0694bdf475dc2021a0-5354907-images-thumbs&n=13"},
+        {name: "Charm Qo'lqop", price: 55000, type: "other", img: "https://avatars.mds.yandex.net/i?id=c327df75519325dabc72349597d1129978a636c8-4577841-images-thumbs&n=13"}
     ];
 
-    let user = JSON.parse(localStorage.getItem('ruslan_v2')) || null;
+    let user = JSON.parse(localStorage.getItem('ruslan_v3')) || null;
     const sectors = [
         {label: "10%", color: "#FFCC00", weight: 30},
         {label: "20%", color: "#FF9900", weight: 25},
@@ -127,9 +145,9 @@
     window.onload = () => {
         if(!user) document.getElementById('auth-page').style.display='flex';
         else { 
-            checkDailyChance();
-            drawWheel();
-            updateChanceDisplay();
+            checkDaily();
+            draw();
+            updateChances();
         }
         renderProducts(products);
     };
@@ -139,99 +157,79 @@
         const p = document.getElementById('reg-phone').value;
         const r = document.getElementById('reg-region').value;
         if(n && p && r) {
-            user = {name:n, phone:p, region:r, chances:1, lastSpin:null, promo:null};
-            localStorage.setItem('ruslan_v2', JSON.stringify(user));
+            user = {name:n, phone:p, region:r, chances:1, lastDate: new Date().toDateString(), promo: null};
+            localStorage.setItem('ruslan_v3', JSON.stringify(user));
             location.reload();
         }
     }
 
-    function checkDailyChance() {
+    function checkDaily() {
         const today = new Date().toDateString();
-        if(user.lastSpinDate !== today) {
+        if(user.lastDate !== today) {
             user.chances += 1;
-            user.lastSpinDate = today;
-            localStorage.setItem('ruslan_v2', JSON.stringify(user));
+            user.lastDate = today;
+            localStorage.setItem('ruslan_v3', JSON.stringify(user));
         }
     }
 
-    function drawWheel() {
+    function draw() {
         const ctx = document.getElementById('canvas').getContext('2d');
         const arc = Math.PI / (sectors.length / 2);
         sectors.forEach((s, i) => {
             const angle = i * arc;
             ctx.fillStyle = s.color;
-            ctx.beginPath();
-            ctx.moveTo(150, 150);
-            ctx.arc(150, 150, 145, angle, angle + arc);
-            ctx.fill();
-            ctx.save();
-            ctx.translate(150, 150);
-            ctx.rotate(angle + arc / 2);
-            ctx.fillStyle = "white";
-            ctx.font = "bold 16px Arial";
-            ctx.fillText(s.label, 70, 5);
-            ctx.restore();
+            ctx.beginPath(); ctx.moveTo(150, 150); ctx.arc(150, 150, 145, angle, angle+arc); ctx.fill();
+            ctx.save(); ctx.translate(150, 150); ctx.rotate(angle + arc/2);
+            ctx.fillStyle = "white"; ctx.font = "bold 14px Arial"; ctx.fillText(s.label, 75, 5); ctx.restore();
         });
     }
 
     function spin() {
-        if(user.chances <= 0) { tg.showAlert("Imkoniyat qolmadi! Buyurtma bering yoki 30 ta do'st qo'shing."); return; }
+        if(user.chances <= 0) { tg.showAlert("Imkoniyat yo'q! Xarid qiling yoki ertaga kiring."); return; }
+        user.chances--; updateChances();
         
-        const btn = document.getElementById('spin-btn');
-        btn.disabled = true;
-        user.chances--;
-        updateChanceDisplay();
-
         const rand = Math.random() * 100;
-        let cumulative = 0;
-        let winnerIndex = 0;
-        for(let i=0; i<sectors.length; i++){
-            cumulative += sectors[i].weight;
-            if(rand <= cumulative) { winnerIndex = i; break; }
+        let cum = 0, winIdx = 0;
+        for(let i=0; i<sectors.length; i++) {
+            cum += sectors[i].weight;
+            if(rand <= cum) { winIdx = i; break; }
         }
 
-        const deg = 3600 + (winnerIndex * (360/sectors.length)) + 15;
+        const deg = 3600 + (winIdx * (360/sectors.length)) + 15;
         document.getElementById('canvas').style.transform = `rotate(-${deg}deg)`;
 
         setTimeout(() => {
-            const win = sectors[winnerIndex];
-            const promo = Math.floor(100000 + Math.random() * 900000); // 6 xonali promo
-            user.promo = { code: promo, value: win.label };
-            localStorage.setItem('ruslan_v2', JSON.stringify(user));
-            tg.showAlert(`Tabriklaymiz! Sizga ${win.label} yutug'i va ${promo} promo-kodi berildi!`);
-            btn.disabled = false;
+            const win = sectors[winIdx];
+            const code = Math.floor(100000 + Math.random() * 899999);
+            user.promo = { code, value: win.label };
+            localStorage.setItem('ruslan_v3', JSON.stringify(user));
+            tg.showAlert(`YUTUQ: ${win.label}\nPromo-kod: ${code}`);
         }, 5000);
     }
 
-    function updateChanceDisplay() { document.getElementById('chance-count').innerText = user.chances; }
+    function updateChances() { document.getElementById('chance-count').innerText = user.chances; }
 
     function openOrder(name, price) {
-        document.getElementById('m-title').innerText = name;
         let finalPrice = Math.round(price * 1.25);
-        
+        const display = document.getElementById('promo-display');
         if(user.promo) {
-            const display = document.getElementById('promo-display');
             display.style.display = 'block';
-            display.innerText = `Promo-kod: ${user.promo.code} (${user.promo.value} chegirma)`;
-            if(user.promo.value.includes('%')) {
-                const disc = parseInt(user.promo.value);
-                finalPrice = finalPrice - (finalPrice * disc / 100);
-            }
-        }
+            display.innerText = `Promo-kod ishlatildi: ${user.promo.code}`;
+            if(user.promo.value.includes('%')) finalPrice -= (finalPrice * parseInt(user.promo.value) / 100);
+        } else { display.style.display = 'none'; }
 
+        document.getElementById('m-title').innerText = name;
         document.getElementById('m-price').innerText = finalPrice.toLocaleString() + " so'm";
-        document.getElementById('p-size').innerHTML = "<option>Standart</option><option>M</option><option>L</option>";
+        document.getElementById('p-size').innerHTML = "<option>O'lcham: Standart</option><option>XL</option><option>L</option><option>M</option>";
         document.getElementById('order-modal').style.display = 'flex';
-        selectedOrder = {name, price: finalPrice};
+        selectedItem = {name, price: finalPrice};
     }
 
     function sendOrder() {
-        // Buyurtma berganda imkoniyat qo'shish
-        user.chances += 1;
-        user.promo = null; // Ishlatilgan promo o'chadi
-        localStorage.setItem('ruslan_v2', JSON.stringify(user));
-        
-        const text = `🛒 BUYURTMA\nMahsulot: ${selectedOrder.name}\nNarx: ${selectedOrder.price}\nHudud: ${user.region}\nFoydalanuvchi: ${user.name}`;
+        user.chances += 1; // Har bir xaridga imkoniyat
+        user.promo = null; // Promo ishlatildi
+        localStorage.setItem('ruslan_v3', JSON.stringify(user));
+        const text = `XARID 🛍\n${selectedItem.name}\n${selectedItem.price} so'm\nHudud: ${user.region}\nTel: ${user.phone}`;
         window.location.href = `https://t.me/Ruslanbek20119?text=${encodeURIComponent(text)}`;
     }
 
@@ -248,8 +246,11 @@
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
     }
-
     function closeModal() { document.getElementById('order-modal').style.display='none'; }
+    function filterProducts() {
+        const t = document.getElementById('searchInput').value.toLowerCase();
+        renderProducts(products.filter(p => p.name.toLowerCase().includes(t)));
+    }
 </script>
 </body>
 </html>
