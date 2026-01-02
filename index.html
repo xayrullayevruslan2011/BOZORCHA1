@@ -71,6 +71,7 @@
     let tg = window.Telegram.WebApp;
     tg.expand();
 
+    // BACKEND URL (Render linkini shu yerga qo'ying)
     const BACKEND_URL = "https://bozorcha1.onrender.com";
 
     function up25(p) { return Math.round(p * 1.25).toLocaleString(); }
@@ -145,6 +146,7 @@
         const total = selectedP.finalPrice || selectedP.rawPrice;
         const size = document.getElementById('p-size').value;
 
+        // 1. Backendga saqlash (YANGI QISIM)
         const orderData = {
             user_name: user.name,
             phone: user.phone,
@@ -159,10 +161,11 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(orderData)
             });
-        } catch (e) { console.error(e); }
+        } catch (e) { console.error("Serverga saqlashda xato:", e); }
 
+        // 2. Telegramga yuborish va statusni saqlash
         localStorage.setItem('my_order', JSON.stringify({name: selectedP.name, date: Date.now(), status: "waiting"}));
-        const text = `💳 TO'LOV QILINDI\n📦: ${selectedP.name}\n💰: ${total} so'm\n📏: ${size}\n👤: ${user.name}\n📞: ${user.phone}`;
+        const text = `💳 TO'LOV QILINDI\n📦: ${selectedP.name}\n💰: ${total} so'm\n📏: ${size}\n👤: ${user.name}\n📞: ${user.phone}\n\n(Iltimos, tekshirib tasdiqlang!)`;
         window.location.href = `https://t.me/Ruslanbek20119?text=${encodeURIComponent(text)}`;
     }
     
@@ -171,31 +174,92 @@
         const container = document.getElementById('order-status-list');
         if(!order) { container.innerHTML = "<p style='text-align:center;'>Buyurtma yo'q</p>"; return; }
         
+        if(order.status === "rejected") {
+            container.innerHTML = `<div class="status-box" style="border-left: 5px solid var(--red);">
+                <b>${order.name}</b><br>
+                <span style="color:var(--red); font-weight:bold;">❌ To'lov tasdiqlanmadi</span><br>
+                <small>Admin to'lovni rad etdi. Iltimos, qaytadan buyurtma bering.</small><br><br>
+                <button onclick="localStorage.removeItem('my_order'); showPage('shop', document.querySelectorAll('.nav-item')[0])" style="background:var(--red); color:white; border:none; padding:8px; border-radius:8px;">Qaytadan buyurtma berish</button>
+            </div>`;
+            return;
+        }
+
+        if(order.status === "received") {
+            container.innerHTML = `<div class="status-box" style="border-left: 5px solid var(--green);">
+                <b>${order.name}</b><br>
+                <span style="color:var(--green); font-weight:bold;">✅ Yetkazib berildi!</span><br>
+                <small>Xaridingiz uchun rahmat. Buyurtma yakunlandi.</small><br><br>
+                <button onclick="localStorage.removeItem('my_order'); showPage('shop', document.querySelectorAll('.nav-item')[0])" style="background:var(--main); color:white; border:none; padding:8px; border-radius:8px;">Yangi buyurtma</button>
+            </div>`;
+            return;
+        }
+
+        if(order.status === "confirmed") {
+            container.innerHTML = `<div class="status-box" style="border-left: 5px solid var(--green);">
+                <b>${order.name}</b><br>
+                <span style="color:var(--green); font-weight:bold;">🚀 Tasdiqlandi. Xitoydan yo'lga chiqdi 🇨🇳</span><br>
+                <small style="color:#888;">Buyurtma vaqti: ${new Date(order.date).toLocaleString()}</small>
+                <div style="margin-top:10px; padding:10px; background:#f9f9f9; border-radius:8px;">
+                    <small>Admin boshqaruvi (GET777):</small><br>
+                    <input type="text" id="admin-code-input" placeholder="Kod..." style="width:50%; padding:5px;">
+                    <button onclick="checkAdminCode()">OK</button>
+                </div>
+            </div>`;
+            return;
+        }
+
+        const farqMinut = Math.floor((Date.now() - order.date) / (1000 * 60));
         let st, rang, belgi;
-        if (order.status === "waiting") { st = "To'lov tekshirilmoqda..."; rang = "var(--orange)"; belgi = "⏳"; }
-        else if (order.status === "confirmed") { st = "Xitoydan yo'lga chiqdi 🇨🇳"; rang = "var(--green)"; belgi = "🚀"; }
-        else if (order.status === "rejected") { st = "To'lov rad etildi ❌"; rang = "var(--red)"; belgi = "🚫"; }
-        else { st = "Yetkazib berildi ✅"; rang = "var(--blue)"; belgi = "📦"; }
+        if (farqMinut < 120) { st = "To'lov tekshirilmoqda..."; rang = "var(--orange)"; belgi = "⏳"; }
+        else if (farqMinut >= 120 && farqMinut < 4320) { st = "Tasdiqlandi. Xitoydan yo'lga chiqdi 🇨🇳"; rang = "var(--green)"; belgi = "🚀"; }
+        else { st = "O'zbekistonga kelmoqda 🇺🇿"; rang = "var(--blue)"; belgi = "🚛"; }
 
         container.innerHTML = `<div class="status-box" style="border-left: 5px solid ${rang};">
             <b>${order.name}</b><br>
             <span style="color:${rang}; font-weight:bold;">${belgi} ${st}</span><br>
-            <small style="color:#888;">Admin kodi bilan tekshiring.</small>
-            <div style="margin-top:10px;">
-                <input type="text" id="admin-code-input" class="inp" placeholder="Kod..." style="padding:5px; width:60%;">
-                <button onclick="checkAdminCode()" class="btn-reg" style="padding:5px; width:30%; display:inline;">OK</button>
+            <small style="color:#888;">Buyurtma vaqti: ${new Date(order.date).toLocaleString()}</small>
+            
+            <div style="margin-top:15px; background:#f0f0f0; padding:10px; border-radius:8px; border: 1px solid #ddd;">
+                <p style="font-size:10px; margin:0 0 5px 0; color:#444;"><b>Admin uchun boshqaruv:</b></p>
+                <input type="text" id="admin-code-input" placeholder="Kodni kiriting..." style="width:60%; padding:6px; font-size:11px; border:1px solid #ccc; border-radius:4px;">
+                <button onclick="checkAdminCode()" style="padding:7px; font-size:10px; background:var(--main); color:white; border:none; border-radius:4px; cursor:pointer;">OK</button>
+                <div style="margin-top:5px; font-size:9px; color:#666;">
+                    Tasdiqlash: <b>OK777</b> | Rad: <b>XATO777</b> | Qabul: <b>GET777</b> | Bekor: <b>DELETE777</b>
+                </div>
             </div>
         </div>`;
     }
 
     function checkAdminCode() {
-        const code = document.getElementById('admin-code-input').value.toUpperCase();
+        const codeInput = document.getElementById('admin-code-input');
+        const code = codeInput.value.toUpperCase();
         let order = JSON.parse(localStorage.getItem('my_order'));
-        if(code === "OK777") order.status = "confirmed";
-        else if(code === "XATO777") order.status = "rejected";
-        else if(code === "GET777") order.status = "received";
-        else { tg.showAlert("Xato kod!"); return; }
-        localStorage.setItem('my_order', JSON.stringify(order));
+        
+        if(code === "XATO777") {
+            order.status = "rejected";
+            localStorage.setItem('my_order', JSON.stringify(order));
+            tg.showAlert("To'lov rad etildi!");
+        } 
+        else if(code === "OK777") {
+            order.status = "confirmed";
+            localStorage.setItem('my_order', JSON.stringify(order));
+            tg.showAlert("Muvaffaqiyatli tasdiqlandi!");
+        } 
+        else if(code === "GET777") {
+            order.status = "received";
+            localStorage.setItem('my_order', JSON.stringify(order));
+            tg.showAlert("Buyurtma qabul qilingan deb belgilandi!");
+        }
+        else if(code === "DELETE777") {
+            localStorage.removeItem('my_order');
+            tg.showAlert("Buyurtma butunlay o'chirildi!");
+            showPage('shop', document.querySelectorAll('.nav-item')[0]);
+            return;
+        }
+        else {
+            tg.showAlert("Noto'g'ri kod!");
+            return;
+        }
         updateStatus();
     }
 
