@@ -71,7 +71,6 @@
     let tg = window.Telegram.WebApp;
     tg.expand();
 
-    // BACKEND URL (Render linkini shu yerga qo'ying)
     const BACKEND_URL = "https://bozorcha1.onrender.com";
 
     function up25(p) { return Math.round(p * 1.25).toLocaleString(); }
@@ -88,7 +87,35 @@
         {name: "Charm Remen", price: 70000, type: "other", img: "https://avatars.mds.yandex.net/i?id=cc3213e0ac2fa192d5d29ae8c4eaa636f2ab6545-5388624-images-thumbs&n=13"},
         {name: "Rolex Watch", price: 350000, type: "other", img: "https://cdn1.ozone.ru/s3/multimedia-1-f/c600/7106545059.jpg"},
         {name: "Dior Bag", price: 190000, type: "other", img: "https://avatars.mds.yandex.net/i?id=f79142412e9a9b7e9e096648252a9c5cb545eb72-9226797-images-thumbs&n=13"},
-        {name: "Zara Mokasina", price: 185000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=22d8abd1e0159833b74664f1e37e32232391a5fa-9152303-images-thumbs&n=13"}
+        {name: "Zara Mokasina", price: 185000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=22d8abd1e0159833b74664f1e37e32232391a5fa-9152303-images-thumbs&n=13"},
+        {name: "Sportivka Nike", price: 210000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=4e2ad4cb6f8bb2148e1372db2b732f36aad9cf56-5334272-images-thumbs&n=13"},
+        {name: "Sviter Kashmir", price: 120000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=d09084e02bca0238a10123c4b8b63907c48a67fe-5876970-images-thumbs&n=13"},
+        {name: "etik detiskiy", price: 65000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=2de6a0abd6d4c21e0652d8d6ab8aa9b9ac5c3a3e-5088700-images-thumbs&n=13"},
+        {name: "Termos 1L", price: 35000, type: "other", img: "https://avatars.mds.yandex.net/i?id=cb19d8d4f51449e1d7b2f223701c0cceac170f06-5354769-images-thumbs&n=13"},
+        {name: "etik qizbolalarga", price: 45000, type: "other", img: "https://avatars.mds.yandex.net/i?id=09c35d96d8de2db1debbc11dd510bd89d1ac157c-5165563-images-thumbs&n=13"},
+        {name: "Slipper", price: 40000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=f7eca6059ad7eeb0fd7275ecb4ead8e1b1d3a394-16477287-images-thumbs&n=13"},
+        {name: "Paypoq (12 juft)", price: 45000, type: "other", img: "https://avatars.mds.yandex.net/i?id=e62cd2900f57009005890eca9965dd170b756b56-5233320-images-thumbs&n=13"},
+        {name: "Gucci Glasses", price: 125000, type: "other", img: "https://avatars.mds.yandex.net/i?id=79320094fd45192d98c11a4c562cf841230b4303-13095363-images-thumbs&n=13"},
+        {name: "Mayka Oq", price: 30000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=dea2ae40a8886506b1f6bcd5df7d8a09a16a4c8d-5083805-images-thumbs&n=13"},
+        {name: "Palto Klassik", price: 280000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=4b7e2423be88c3c91c2288bda8b7f530bed31428-11543356-images-thumbs&n=13"},
+        {name: "Grey Svitshot", price: 110000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=a52fa236d5e23058498f47845134381620076a0c-4817585-images-thumbs&n=13"},
+        {name: "Butsi CR7", price: 250000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=955f5a96ef0407a40036c57870d8a26858dc1de1-9147490-images-thumbs&n=13"},
+        {name: "Charm Kasholok", price: 60000, type: "other", img: "https://avatars.mds.yandex.net/i?id=c946c87f9186063f371d28edfd551675f5b367ee-12321292-images-thumbs&n=13"},
+        {name: "Jinsi Kurtka", price: 180000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=2806b3df83565217f518bc6d28669dd0b469da71-12346171-images-thumbs&n=13"},
+        {name: "Ayollar Tufli", price: 195000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=e2848e85ba6b48b1ae981456bd1625821b9bd0d8-9266608-images-thumbs&n=13"},
+        {name: "Shapka Sharf", price: 55000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=da6492ab1e012dfdb6f14d21e1e773014990bfc2-12323207-images-thumbs&n=13"},
+        {name: "Powerbank Mi", price: 120000, type: "other", img: "https://avatars.mds.yandex.net/i?id=d14c1345a79ae8b7cf5e0079f58dad7a46615c5d-4080206-images-thumbs&n=13"},
+        {name: "Real Madrid forma", price: 95000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=91dd766c7da0e17bca09609db0d0ff523bb867ee-5646461-images-thumbs&n=13"},
+        {name: "velosiped", price: 600000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=ee2185a8c49748952fb1e3e616c44a156778aab5-5668729-images-thumbs&n=13"},
+        {name: "Kargo Shim", price: 155000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=527c6bf4959b7393e145d6331eb86d1997330a50-12190079-images-thumbs&n=13"},
+        {name: "Zontik", price: 50000, type: "other", img: "https://avatars.mds.yandex.net/i?id=f95de4ef87a20fd80cb0e69b943300478b24de5d-8236365-images-thumbs&n=13"},
+        {name: "Soch Fen", price: 100000, type: "other", img: "https://avatars.mds.yandex.net/i?id=cfb4f0cc27e67359417b63ee89935b1df007ce1e-5166135-images-thumbs&n=13"},
+        {name: "printercha", price: 95000, type: "other", img: "https://avatars.mds.yandex.net/i?id=4cbef11efd3ef5b256645f41bc7445940bd2f73f-10108411-images-thumbs&n=13"},
+        {name: "Fila Sneakers", price: 220000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=8234a6722a98b9f5722c181de9122965a81b52c0-5470361-images-thumbs&n=13"},
+        {name: "quloqchin", price: 30000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=07095e2b6bb3c1258f1bbe260580632124a5c502-5115418-images-thumbs&n=13"},
+        {name: "Sandali", price: 80000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=e93e7e435d7594b6d12a37d39f75fdba38b22977-5642274-images-thumbs&n=13"},
+        {name: "mafiya o'yini", price: 35000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=edef3ffbc286e535ca0aff0694bdf475dc2021a0-5354907-images-thumbs&n=13"},
+        {name: "Charm Qo'lqop", price: 55000, type: "other", img: "https://avatars.mds.yandex.net/i?id=c327df75519325dabc72349597d1129978a636c8-4577841-images-thumbs&n=13"}
     ];
 
     window.onload = () => { if (!localStorage.getItem('ruslan_user')) document.getElementById('auth-page').style.display = 'flex'; renderProducts(); }
@@ -146,7 +173,6 @@
         const total = selectedP.finalPrice || selectedP.rawPrice;
         const size = document.getElementById('p-size').value;
 
-        // 1. Backendga saqlash (YANGI QISIM)
         const orderData = {
             user_name: user.name,
             phone: user.phone,
@@ -163,7 +189,6 @@
             });
         } catch (e) { console.error("Serverga saqlashda xato:", e); }
 
-        // 2. Telegramga yuborish va statusni saqlash
         localStorage.setItem('my_order', JSON.stringify({name: selectedP.name, date: Date.now(), status: "waiting"}));
         const text = `💳 TO'LOV QILINDI\n📦: ${selectedP.name}\n💰: ${total} so'm\n📏: ${size}\n👤: ${user.name}\n📞: ${user.phone}\n\n(Iltimos, tekshirib tasdiqlang!)`;
         window.location.href = `https://t.me/Ruslanbek20119?text=${encodeURIComponent(text)}`;
@@ -218,7 +243,6 @@
             <b>${order.name}</b><br>
             <span style="color:${rang}; font-weight:bold;">${belgi} ${st}</span><br>
             <small style="color:#888;">Buyurtma vaqti: ${new Date(order.date).toLocaleString()}</small>
-            
             <div style="margin-top:15px; background:#f0f0f0; padding:10px; border-radius:8px; border: 1px solid #ddd;">
                 <p style="font-size:10px; margin:0 0 5px 0; color:#444;"><b>Admin uchun boshqaruv:</b></p>
                 <input type="text" id="admin-code-input" placeholder="Kodni kiriting..." style="width:60%; padding:6px; font-size:11px; border:1px solid #ccc; border-radius:4px;">
@@ -239,24 +263,20 @@
             order.status = "rejected";
             localStorage.setItem('my_order', JSON.stringify(order));
             tg.showAlert("To'lov rad etildi!");
-        } 
-        else if(code === "OK777") {
+        } else if(code === "OK777") {
             order.status = "confirmed";
             localStorage.setItem('my_order', JSON.stringify(order));
             tg.showAlert("Muvaffaqiyatli tasdiqlandi!");
-        } 
-        else if(code === "GET777") {
+        } else if(code === "GET777") {
             order.status = "received";
             localStorage.setItem('my_order', JSON.stringify(order));
             tg.showAlert("Buyurtma qabul qilingan deb belgilandi!");
-        }
-        else if(code === "DELETE777") {
+        } else if(code === "DELETE777") {
             localStorage.removeItem('my_order');
             tg.showAlert("Buyurtma butunlay o'chirildi!");
             showPage('shop', document.querySelectorAll('.nav-item')[0]);
             return;
-        }
-        else {
+        } else {
             tg.showAlert("Noto'g'ri kod!");
             return;
         }
