@@ -3,49 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ruslan Market | Uzum Style</title>
+    <title>Ruslan Market | Premium Wheel</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --main: #7f46f0; --bg: #f4f5f7; --white: #ffffff; --gray: #8b8e99; --text: #1f2026; --orange: #ff9800; --red: #dc3545; --green: #28a745; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: var(--text); padding-bottom: 70px; overflow-x: hidden; }
         
+        /* Header & Pages */
         .header-search { background: var(--white); padding: 10px 15px; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #e5e7ea; }
         .search-box { background: #edeff2; border-radius: 10px; display: flex; align-items: center; padding: 8px 12px; }
         .search-box input { border: none; background: transparent; margin-left: 10px; width: 100%; outline: none; font-size: 14px; }
-
         .page { display: none; padding: 15px; animation: fadeIn 0.2s ease; }
         .active-page { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+        /* Grid & Cards */
         .container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .card { background: var(--white); border-radius: 12px; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; }
+        .card { background: var(--white); border-radius: 12px; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .card img { width: 100%; height: 160px; object-fit: cover; }
         .p-info { padding: 10px; flex-grow: 1; }
         .price { font-weight: bold; font-size: 15px; margin: 5px 0; color: var(--text); }
         .title { font-size: 12px; color: #4d4e59; height: 32px; overflow: hidden; line-height: 1.3; }
 
+        /* Navigation */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--white); display: flex; justify-content: space-around; padding: 8px 0; border-top: 1px solid #e5e7ea; z-index: 2000; }
         .nav-item { border: none; background: none; color: var(--gray); display: flex; flex-direction: column; align-items: center; font-size: 10px; cursor: pointer; }
         .nav-item i { font-size: 18px; margin-bottom: 4px; }
         .nav-item.active { color: var(--main); }
 
-        .menu-list { background: var(--white); border-radius: 12px; margin-top: 10px; overflow: hidden; }
-        .menu-item { padding: 15px; border-bottom: 1px solid #f4f5f7; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
-        .menu-item div { display: flex; align-items: center; }
-        .menu-item i { margin-right: 12px; width: 20px; color: #4d4e59; }
+        /* Wheel Styles */
+        #wheel-wrapper { position: relative; width: 300px; height: 300px; margin: 20px auto; }
+        #canvas { width: 100%; height: 100%; transform: rotate(0deg); transition: transform 5s cubic-bezier(0.1, 0, 0.2, 1); }
+        .pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 30px; height: 30px; background: var(--red); clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 100; border: 2px solid white; }
+        .chance-badge { background: var(--main); color: white; padding: 5px 15px; border-radius: 20px; font-size: 12px; margin-bottom: 10px; display: inline-block; }
 
+        /* Modal */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 3000; align-items: flex-end; }
         .modal-content { background: var(--white); width: 100%; padding: 20px; border-radius: 20px 20px 0 0; box-sizing: border-box; }
-        .card-box { background: #f3f0ff; border: 1px dashed var(--main); padding: 15px; border-radius: 12px; margin: 15px 0; text-align: center; }
+        .promo-box { background: #e8f5e9; border: 1px dashed var(--green); padding: 10px; border-radius: 8px; margin: 10px 0; text-align: center; color: var(--green); font-weight: bold; }
         .btn-pay { width: 100%; padding: 15px; background: var(--main); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
-        .status-box { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--orange); }
-
-        /* Baraban stillari */
-        #wheel-container { text-align: center; padding: 20px; background: white; border-radius: 20px; margin-top: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .wheel { width: 260px; height: 260px; border: 8px solid var(--main); border-radius: 50%; margin: 20px auto; position: relative; transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); overflow: hidden; }
-        .wheel-pointer { width: 40px; height: 40px; background: var(--red); clip-path: polygon(50% 100%, 0 0, 100% 0); position: absolute; top: -10px; left: 50%; transform: translateX(-50%); z-index: 10; }
-        .discount-badge { background: var(--green); color: white; padding: 5px 10px; border-radius: 5px; font-weight: bold; display: none; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -55,259 +52,204 @@
         <input type="text" id="reg-name" style="width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd;" placeholder="Ismingiz">
         <input type="tel" id="reg-phone" style="width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd;" placeholder="Telefon raqamingiz">
         <select id="reg-region" style="width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd;">
-            <option value="">Yashash hududingizni tanlang</option>
-            <option>Toshkent sh.</option><option>Toshkent vil.</option><option>Samarqand</option><option>Farg'ona</option>
-            <option>Andijon</option><option>Namangan</option><option>Buxoro</option><option>Navoiy</option>
-            <option>Qashqadaryo</option><option>Surxondaryo</option><option>Xorazm</option><option>Jizzax</option>
-            <option>Sirdaryo</option><option>Qoraqalpog'iston</option>
+            <option value="">Hududni tanlang</option>
+            <option>Toshkent</option><option>Andijon</option><option>Farg'ona</option><option>Namangan</option>
+            <option>Samarqand</option><option>Buxoro</option><option>Xorazm</option><option>Surxondaryo</option>
+            <option>Qashqadaryo</option><option>Jizzax</option><option>Sirdaryo</option><option>Navoiy</option>
         </select>
-        <button onclick="saveUser()" style="width: 100%; padding: 15px; background: var(--main); color: #fff; border: none; border-radius: 12px; font-weight: bold;">Do'konga kirish</button>
+        <button onclick="saveUser()" style="width: 100%; padding: 15px; background: var(--main); color: #fff; border: none; border-radius: 12px; font-weight: bold;">Kirish</button>
     </div>
 
     <div class="header-search">
-        <div class="search-box"><i class="fa fa-search" style="color: var(--gray);"></i><input type="text" id="searchInput" oninput="filterProducts()" placeholder="Mahsulotlarni qidirish..."></div>
+        <div class="search-box"><i class="fa fa-search" style="color: var(--gray);"></i><input type="text" id="searchInput" oninput="filterProducts()" placeholder="Qidiruv..."></div>
     </div>
 
-    <div id="home" class="page active-page"><h3 style="margin-top: 0;">Foyda xitlari</h3><div class="container" id="product-list"></div></div>
-    
-    <div id="catalog" class="page">
-        <h3>Turkumlar</h3>
-        <div class="menu-list">
-            <div class="menu-item"><div><i class="fa fa-shirt"></i> Kiyimlar</div><i class="fa fa-chevron-right"></i></div>
-            <div class="menu-item"><div><i class="fa fa-shoe-prints"></i> Poyabzallar</div><i class="fa fa-chevron-right"></i></div>
-            <div class="menu-item"><div><i class="fa fa-laptop"></i> Elektronika</div><i class="fa fa-chevron-right"></i></div>
-            <div class="menu-item"><div><i class="fa fa-house"></i> Uy ro'zg'or</div><i class="fa fa-chevron-right"></i></div>
-        </div>
-    </div>
+    <div id="home" class="page active-page"><h3>Foyda xitlari</h3><div class="container" id="product-list"></div></div>
 
-    <div id="lucky" class="page">
+    <div id="lucky" class="page" style="text-align: center;">
         <h3>Omadli Baraban</h3>
-        <div id="wheel-container">
-            <p style="font-size: 14px; color: var(--gray);">Kunda 1 marta aylantiring va chegirma yoki maxsus sovg'a yuting!</p>
-            <div style="position: relative;">
-                <div class="wheel-pointer"></div>
-                <div id="main-wheel" class="wheel">
-                    <img src="https://cdn-icons-png.flaticon.com/512/3561/3561338.png" style="width: 100%; height: 100%; transform: rotate(0deg);">
-                </div>
-            </div>
-            <button id="spin-btn" onclick="spinWheel()" style="padding: 12px 30px; background: var(--orange); color: white; border: none; border-radius: 30px; font-weight: bold; cursor: pointer;">AYLANTIRISH</button>
-            <div id="discount-res" class="discount-badge"></div>
+        <div class="chance-badge">Imkoniyatlaringiz: <span id="chance-count">0</span> ta</div>
+        <div id="wheel-wrapper">
+            <div class="pointer"></div>
+            <canvas id="canvas" width="300" height="300"></canvas>
         </div>
+        <button id="spin-btn" onclick="spin()" style="padding: 15px 40px; background: var(--main); color: white; border: none; border-radius: 30px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 15px rgba(127,70,240,0.3);">AYLANTIRISH</button>
+        <p style="font-size: 12px; color: var(--gray); margin-top: 20px;">
+            🎁 Printercha yutish imkoniyati: 1% <br>
+            ➕ Odam qo'shsangiz yoki xarid qilsangiz imkoniyat ko'payadi!
+        </p>
     </div>
 
     <div id="cart" class="page">
-        <h3>Savat (Buyurtmalar)</h3>
+        <h3>Savat / Holat</h3>
         <div id="order-status-list"></div>
-        <div id="cart-empty" style="text-align: center; margin-top: 50px;">
-            <i class="fa fa-shopping-bag" style="font-size: 50px; color: #e5e7ea;"></i>
-            <p style="color: var(--gray);">Hozircha buyurtmalar yo'q</p>
-        </div>
-    </div>
-
-    <div id="profile" class="page">
-        <div style="display: flex; align-items: center; padding: 20px 0;"><div style="width: 60px; height: 60px; background: var(--main); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 25px; color: white;"><i class="fa fa-user"></i></div><div style="margin-left: 15px;"><b id="display-name">Foydalanuvchi</b><br><small id="display-phone" style="color: var(--gray);"></small><br><small id="display-region" style="color: var(--main);"></small></div></div>
-        <div class="menu-list">
-            <div class="menu-item" onclick="openPage('cart', document.querySelectorAll('.nav-item')[3])"><div><i class="fa fa-box"></i> Buyurtmalarim</div><i class="fa fa-chevron-right"></i></div>
-            <div class="menu-item" onclick="localStorage.clear(); location.reload();"><div><i class="fa fa-right-from-bracket"></i> Chiqish</div></div>
-        </div>
+        <div id="cart-empty" style="text-align: center; margin-top: 50px;"><i class="fa fa-shopping-bag" style="font-size: 50px; color: #eee;"></i><p>Buyurtmalar yo'q</p></div>
     </div>
 
     <div class="bottom-nav">
-        <button class="nav-item active" onclick="openPage('home', this)"><i class="fa fa-house"></i><span>Asosiy</span></button>
-        <button class="nav-item" onclick="openPage('catalog', this)"><i class="fa fa-magnifying-glass"></i><span>Katalog</span></button>
-        <button class="nav-item" onclick="openPage('lucky', this)"><i class="fa fa-clover"></i><span>Omadli</span></button>
+        <button class="nav-item active" onclick="openPage('home', this)"><i class="fa fa-house"></i><span>Bosh sahifa</span></button>
+        <button class="nav-item" onclick="openPage('lucky', this)"><i class="fa fa- DH-wheel"></i><i class="fa fa-clover"></i><span>Baraban</span></button>
         <button class="nav-item" onclick="openPage('cart', this)"><i class="fa fa-bag-shopping"></i><span>Savat</span></button>
-        <button class="nav-item" onclick="openPage('profile', this)"><i class="fa fa-user"></i><span>Profil</span></button>
     </div>
 
     <div id="order-modal" class="modal" onclick="if(event.target==this) closeModal()">
         <div class="modal-content">
             <h3 id="m-title"></h3>
-            <div id="discount-info" style="color: var(--green); font-weight: bold; font-size: 14px; display: none;">Baraban chegirmasi qo'llanildi!</div>
+            <div id="promo-display" class="promo-box" style="display: none;"></div>
             <p id="m-price" style="font-size: 20px; color: var(--main); font-weight: bold;"></p>
-            <div class="card-box">
-                <small>To'lov uchun karta (Humo):</small><br><br>
-                <b id="card-num" style="font-size: 18px;">4073420067355457</b><br><br>
-                <span style="color: var(--main); font-weight: bold;">Gulzebo Xolboeva</span><br><br>
-                <button onclick="copyCard()" style="font-size:12px; margin-top:8px; cursor:pointer; background:#eee; border:1px solid #ccc; padding:4px 10px; border-radius:5px;">Nusxa olish</button>
+            <div style="background: #f3f0ff; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 10px;">
+                <small>Humo Karta:</small><br><b>4073420067355457</b><br><small>Gulzebo Xolboeva</small>
             </div>
             <select id="p-size" style="width:100%; padding:12px; border-radius:10px; border:1px solid #ddd; margin-bottom:15px;"></select>
-            <button class="btn-pay" onclick="sendOrder()">To'lovni tasdiqlash</button>
+            <button class="btn-pay" onclick="sendOrder()">Tasdiqlash</button>
         </div>
     </div>
 
 <script>
     let tg = window.Telegram.WebApp;
-    tg.expand();
-    const BACKEND_URL = "https://bozorcha1.onrender.com";
-    let activeDiscount = 0;
-
     const products = [
         {name: "Qishki Kurtka Premium", price: 200000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=70951574663cbae2ac73b1f8a4f8a2ea3c06527a-9099023-images-thumbs&n=13"},
         {name: "Nike Air Max 270", price: 280000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=f1e7218c18bd5095bc3e5696f25fb4348235580a-4322265-images-thumbs&n=13"},
-        {name: "Polo Dvoyka", price: 150000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=b8b693d50f4c2381d985a1c8f33d3cb0be4ca464-4027983-images-thumbs&n=13"},
-        {name: "Klassik Shim", price: 99000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=410b6c32f91f6361a156b6f65a31f0c6d4faaf6f-5235890-images-thumbs&n=13"},
-        {name: "Tufli Charm", price: 100000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=a0fe76efd8801116ec5dfd344f6f904cf2b54d3d-5236416-images-thumbs&n=13"},
-        {name: "Hudi Oversize", price: 130000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=0820d25df2e30ed233e70414ddf08a298e916183-5307529-images-thumbs&n=13"},
-        {name: "Adidas Yeezy", price: 200000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=30787d09a791c5c4c45821dd2120c2d8463c1ce0-5235999-images-thumbs&n=13"},
-        {name: "suvarka aparat", price: 55000, type: "other", img: "https://avatars.mds.yandex.net/i?id=db3e3ea838e7139ba301d62bf81326cc1c84cb13-5279204-images-thumbs&n=13"},
-        {name: "Charm Remen", price: 70000, type: "other", img: "https://avatars.mds.yandex.net/i?id=cc3213e0ac2fa192d5d29ae8c4eaa636f2ab6545-5388624-images-thumbs&n=13"},
-        {name: "Rolex Watch", price: 350000, type: "other", img: "https://cdn1.ozone.ru/s3/multimedia-1-f/c600/7106545059.jpg"},
-        {name: "Dior Bag", price: 190000, type: "other", img: "https://avatars.mds.yandex.net/i?id=f79142412e9a9b7e9e096648252a9c5cb545eb72-9226797-images-thumbs&n=13"},
-        {name: "Zara Mokasina", price: 185000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=22d8abd1e0159833b74664f1e37e32232391a5fa-9152303-images-thumbs&n=13"},
-        {name: "Sportivka Nike", price: 210000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=4e2ad4cb6f8bb2148e1372db2b732f36aad9cf56-5334272-images-thumbs&n=13"},
-        {name: "printercha", price: 95000, type: "other", img: "https://avatars.mds.yandex.net/i?id=4cbef11efd3ef5b256645f41bc7445940bd2f73f-10108411-images-thumbs&n=13"}
+        {name: "Printercha Smart", price: 150000, type: "other", img: "https://avatars.mds.yandex.net/i?id=4cbef11efd3ef5b256645f41bc7445940bd2f73f-10108411-images-thumbs&n=13"},
+        {name: "Polo Dvoyka", price: 150000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=b8b693d50f4c2381d985a1c8f33d3cb0be4ca464-4027983-images-thumbs&n=13"}
+    ];
+
+    let user = JSON.parse(localStorage.getItem('ruslan_v2')) || null;
+    const sectors = [
+        {label: "10%", color: "#FFCC00", weight: 30},
+        {label: "20%", color: "#FF9900", weight: 25},
+        {label: "30%", color: "#7f46f0", weight: 20},
+        {label: "40%", color: "#28a745", weight: 14},
+        {label: "50%", color: "#dc3545", weight: 10},
+        {label: "PRINTER", color: "#000000", weight: 1}
     ];
 
     window.onload = () => {
-        const user = JSON.parse(localStorage.getItem('ruslan_user'));
-        if (!user) document.getElementById('auth-page').style.display = 'flex';
-        else {
-            document.getElementById('display-name').innerText = user.name;
-            document.getElementById('display-phone').innerText = user.phone;
-            document.getElementById('display-region').innerText = "Hudud: " + (user.region || "Belgilanmagan");
-            if(user.discount) activeDiscount = user.discount;
+        if(!user) document.getElementById('auth-page').style.display='flex';
+        else { 
+            checkDailyChance();
+            drawWheel();
+            updateChanceDisplay();
         }
         renderProducts(products);
-    }
+    };
 
     function saveUser() {
-        const name = document.getElementById('reg-name').value;
-        const phone = document.getElementById('reg-phone').value;
-        const region = document.getElementById('reg-region').value;
-        if (name.length > 2 && phone.length > 6 && region !== "") {
-            localStorage.setItem('ruslan_user', JSON.stringify({name, phone, region}));
+        const n = document.getElementById('reg-name').value;
+        const p = document.getElementById('reg-phone').value;
+        const r = document.getElementById('reg-region').value;
+        if(n && p && r) {
+            user = {name:n, phone:p, region:r, chances:1, lastSpin:null, promo:null};
+            localStorage.setItem('ruslan_v2', JSON.stringify(user));
             location.reload();
-        } else { tg.showAlert("Iltimos, barcha ma'lumotlarni to'ldiring!"); }
+        }
     }
 
-    // Baraban Funksiyasi
-    function spinWheel() {
-        const user = JSON.parse(localStorage.getItem('ruslan_user'));
-        if (user.hasSpun) { tg.showAlert("Siz bugungi imkoniyatingizdan foydalangansiz!"); return; }
+    function checkDailyChance() {
+        const today = new Date().toDateString();
+        if(user.lastSpinDate !== today) {
+            user.chances += 1;
+            user.lastSpinDate = today;
+            localStorage.setItem('ruslan_v2', JSON.stringify(user));
+        }
+    }
 
-        const wheel = document.getElementById('main-wheel');
+    function drawWheel() {
+        const ctx = document.getElementById('canvas').getContext('2d');
+        const arc = Math.PI / (sectors.length / 2);
+        sectors.forEach((s, i) => {
+            const angle = i * arc;
+            ctx.fillStyle = s.color;
+            ctx.beginPath();
+            ctx.moveTo(150, 150);
+            ctx.arc(150, 150, 145, angle, angle + arc);
+            ctx.fill();
+            ctx.save();
+            ctx.translate(150, 150);
+            ctx.rotate(angle + arc / 2);
+            ctx.fillStyle = "white";
+            ctx.font = "bold 16px Arial";
+            ctx.fillText(s.label, 70, 5);
+            ctx.restore();
+        });
+    }
+
+    function spin() {
+        if(user.chances <= 0) { tg.showAlert("Imkoniyat qolmadi! Buyurtma bering yoki 30 ta do'st qo'shing."); return; }
+        
         const btn = document.getElementById('spin-btn');
         btn.disabled = true;
+        user.chances--;
+        updateChanceDisplay();
 
         const rand = Math.random() * 100;
-        let result, degree;
-
-        if (rand <= 8) { // 8% Maxsus yutuq
-            result = "PRINTERCHA yutdingiz! (Admin bilan bog'laning)";
-            degree = 1800 + 45; 
-            activeDiscount = 100; // Shartli bepul
-        } else {
-            const discounts = [10, 20, 30, 40, 50];
-            activeDiscount = discounts[Math.floor(Math.random() * discounts.length)];
-            result = activeDiscount + "% chegirma yutdingiz!";
-            degree = 1800 + (Math.random() * 360);
+        let cumulative = 0;
+        let winnerIndex = 0;
+        for(let i=0; i<sectors.length; i++){
+            cumulative += sectors[i].weight;
+            if(rand <= cumulative) { winnerIndex = i; break; }
         }
 
-        wheel.style.transform = `rotate(${degree}deg)`;
+        const deg = 3600 + (winnerIndex * (360/sectors.length)) + 15;
+        document.getElementById('canvas').style.transform = `rotate(-${deg}deg)`;
 
         setTimeout(() => {
-            document.getElementById('discount-res').style.display = 'block';
-            document.getElementById('discount-res').innerText = "Yutuq: " + result;
-            user.hasSpun = true;
-            user.discount = activeDiscount;
-            localStorage.setItem('ruslan_user', JSON.stringify(user));
-            tg.showAlert("Tabriklaymiz! " + result);
-        }, 4000);
+            const win = sectors[winnerIndex];
+            const promo = Math.floor(100000 + Math.random() * 900000); // 6 xonali promo
+            user.promo = { code: promo, value: win.label };
+            localStorage.setItem('ruslan_v2', JSON.stringify(user));
+            tg.showAlert(`Tabriklaymiz! Sizga ${win.label} yutug'i va ${promo} promo-kodi berildi!`);
+            btn.disabled = false;
+        }, 5000);
+    }
+
+    function updateChanceDisplay() { document.getElementById('chance-count').innerText = user.chances; }
+
+    function openOrder(name, price) {
+        document.getElementById('m-title').innerText = name;
+        let finalPrice = Math.round(price * 1.25);
+        
+        if(user.promo) {
+            const display = document.getElementById('promo-display');
+            display.style.display = 'block';
+            display.innerText = `Promo-kod: ${user.promo.code} (${user.promo.value} chegirma)`;
+            if(user.promo.value.includes('%')) {
+                const disc = parseInt(user.promo.value);
+                finalPrice = finalPrice - (finalPrice * disc / 100);
+            }
+        }
+
+        document.getElementById('m-price').innerText = finalPrice.toLocaleString() + " so'm";
+        document.getElementById('p-size').innerHTML = "<option>Standart</option><option>M</option><option>L</option>";
+        document.getElementById('order-modal').style.display = 'flex';
+        selectedOrder = {name, price: finalPrice};
+    }
+
+    function sendOrder() {
+        // Buyurtma berganda imkoniyat qo'shish
+        user.chances += 1;
+        user.promo = null; // Ishlatilgan promo o'chadi
+        localStorage.setItem('ruslan_v2', JSON.stringify(user));
+        
+        const text = `🛒 BUYURTMA\nMahsulot: ${selectedOrder.name}\nNarx: ${selectedOrder.price}\nHudud: ${user.region}\nFoydalanuvchi: ${user.name}`;
+        window.location.href = `https://t.me/Ruslanbek20119?text=${encodeURIComponent(text)}`;
     }
 
     function renderProducts(list) {
         document.getElementById('product-list').innerHTML = list.map(p => `
-            <div class="card" onclick="openOrder('${p.name}', ${Math.round(p.price * 1.25)}, '${p.type}')">
+            <div class="card" onclick="openOrder('${p.name}', ${p.price})">
                 <img src="${p.img}"><div class="p-info"><div class="title">${p.name}</div><div class="price">${(Math.round(p.price * 1.25)).toLocaleString()} so'm</div></div>
             </div>`).join('');
     }
 
-    function openPage(name, el) {
+    function openPage(id, el) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-        document.getElementById(name).classList.add('active-page');
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        document.getElementById(id).classList.add('active-page');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
-        if (name === 'cart') updateStatus();
-    }
-
-    let selectedP = {};
-    function openOrder(name, price, type) {
-        let finalPrice = price;
-        if(activeDiscount > 0 && activeDiscount < 100) {
-            finalPrice = price - (price * activeDiscount / 100);
-            document.getElementById('discount-info').style.display = 'block';
-            document.getElementById('discount-info').innerText = activeDiscount + "% chegirma qo'llanildi!";
-        } else {
-            document.getElementById('discount-info').style.display = 'none';
-        }
-
-        selectedP = {name, price: finalPrice};
-        document.getElementById('m-title').innerText = name;
-        document.getElementById('m-price').innerText = finalPrice.toLocaleString() + " so'm";
-        const s = document.getElementById('p-size');
-        if(type==="clothing") s.innerHTML = ["S","M","L","XL","XXL"].map(x=>`<option>${x}</option>`).join('');
-        else if(type==="shoes") s.innerHTML = ["38","39","40","41","42","43","44"].map(x=>`<option>${x}</option>`).join('');
-        else s.innerHTML = "<option>Standart</option>";
-        document.getElementById('order-modal').style.display = 'flex';
-    }
-
-    function copyCard() {
-        navigator.clipboard.writeText("4073420067355457");
-        tg.showAlert("Karta raqami nusxalandi!");
-    }
-
-    async function sendOrder() {
-        const user = JSON.parse(localStorage.getItem('ruslan_user'));
-        const size = document.getElementById('p-size').value;
-
-        try {
-            await fetch(`${BACKEND_URL}/api/orders`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_name: user.name, phone: user.phone, region: user.region, product: selectedP.name, price: selectedP.price.toString(), size: size })
-            });
-        } catch (e) { console.log(e); }
-
-        localStorage.setItem('my_order', JSON.stringify({name: selectedP.name, date: Date.now(), status: "waiting"}));
-        const text = `💳 TO'LOV QILINDI\n📦: ${selectedP.name}\n💰: ${selectedP.price.toLocaleString()} so'm\n📏: ${size}\n📍 Hudud: ${user.region}\n👤: ${user.name}\n📞: ${user.phone}\n\nKarta: 4073420067355457 (Gulzebo Xolboeva)`;
-        window.location.href = `https://t.me/Ruslanbek20119?text=${encodeURIComponent(text)}`;
-    }
-
-    function updateStatus() {
-        const order = JSON.parse(localStorage.getItem('my_order'));
-        const container = document.getElementById('order-status-list');
-        if(!order) { document.getElementById('cart-empty').style.display = 'block'; container.innerHTML = ""; return; }
-        document.getElementById('cart-empty').style.display = 'none';
-        
-        let st, rang, belgi;
-        if (order.status === "waiting") { st = "To'lov tekshirilmoqda..."; rang = "var(--orange)"; belgi = "⏳"; }
-        else if (order.status === "confirmed") { st = "Xitoydan yo'lga chiqdi 🇨🇳"; rang = "var(--green)"; belgi = "🚀"; }
-        else if (order.status === "rejected") { st = "To'lov rad etildi ❌"; rang = "var(--red)"; belgi = "🚫"; }
-        else { st = "Yetkazib berildi ✅"; rang = "var(--blue)"; belgi = "📦"; }
-
-        container.innerHTML = `<div class="status-box" style="border-left: 5px solid ${rang};">
-            <b>${order.name}</b><br><span style="color:${rang}; font-weight:bold;">${belgi} ${st}</span><br><br>
-            <div style="margin-top:10px;"><input type="text" id="admin-code-input" style="padding:8px; width:60%; border:1px solid #ddd; border-radius:8px;" placeholder="Kod..."><button onclick="checkAdminCode()" style="padding:8px; background:var(--main); color:white; border:none; border-radius:8px; cursor:pointer;">OK</button></div>
-        </div>`;
-    }
-
-    function checkAdminCode() {
-        const code = document.getElementById('admin-code-input').value.toUpperCase();
-        let order = JSON.parse(localStorage.getItem('my_order'));
-        if(code === "OK777") order.status = "confirmed";
-        else if(code === "XATO777") order.status = "rejected";
-        else if(code === "GET777") order.status = "received";
-        else { tg.showAlert("Xato kod!"); return; }
-        localStorage.setItem('my_order', JSON.stringify(order));
-        updateStatus();
     }
 
     function closeModal() { document.getElementById('order-modal').style.display='none'; }
-    function filterProducts() {
-        const term = document.getElementById('searchInput').value.toLowerCase();
-        renderProducts(products.filter(p => p.name.toLowerCase().includes(term)));
-    }
 </script>
 </body>
 </html>
