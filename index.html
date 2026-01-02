@@ -10,12 +10,10 @@
         :root { --main: #7f46f0; --bg: #f4f5f7; --white: #ffffff; --gray: #8b8e99; --text: #1f2026; --orange: #ff9800; --red: #dc3545; --green: #28a745; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: var(--text); padding-bottom: 75px; overflow-x: hidden; }
         
-        /* Header & Search */
         .header-search { background: var(--white); padding: 10px 15px; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #e5e7ea; }
         .search-box { background: #edeff2; border-radius: 10px; display: flex; align-items: center; padding: 8px 12px; margin-bottom: 10px; }
         .search-box input { border: none; background: transparent; margin-left: 10px; width: 100%; outline: none; font-size: 14px; }
         
-        /* Category Tabs */
         .categories { display: flex; gap: 10px; overflow-x: auto; padding: 5px 0; scrollbar-width: none; }
         .categories::-webkit-scrollbar { display: none; }
         .cat-btn { padding: 8px 15px; background: #fff; border: 1px solid #e5e7ea; border-radius: 20px; font-size: 13px; white-space: nowrap; cursor: pointer; }
@@ -25,35 +23,28 @@
         .active-page { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Product Cards */
         .container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .card { background: var(--white); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; }
         .card img { width: 100%; height: 160px; object-fit: cover; }
         .p-info { padding: 10px; }
         .price { font-weight: bold; font-size: 15px; color: var(--main); }
         .title { font-size: 12px; color: #4d4e59; height: 32px; overflow: hidden; margin-bottom: 5px; }
-        .fav-btn { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.8); border: none; border-radius: 50%; width: 30px; height: 30px; color: var(--gray); z-index: 10; }
-        .fav-btn.active { color: var(--red); }
 
-        /* Navigation */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--white); display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #e5e7ea; z-index: 2000; }
         .nav-item { border: none; background: none; color: var(--gray); display: flex; flex-direction: column; align-items: center; font-size: 11px; cursor: pointer; position: relative; }
         .nav-item i { font-size: 20px; margin-bottom: 4px; }
         .nav-item.active { color: var(--main); }
         .badge { position: absolute; top: -5px; right: 5px; background: var(--red); color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; }
 
-        /* Cart Styles */
         .cart-item { background: white; padding: 10px; border-radius: 12px; display: flex; align-items: center; margin-bottom: 10px; }
         .cart-item img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
-        .cart-details { flex: 1; margin-left: 10px; }
-        .qty-controls { display: flex; align-items: center; gap: 10px; }
-        .qty-btn { background: #edeff2; border: none; width: 25px; height: 25px; border-radius: 5px; }
-
-        /* Modals */
+        
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 3000; align-items: flex-end; }
-        .modal-content { background: var(--white); width: 100%; padding: 25px; border-radius: 25px 25px 0 0; box-sizing: border-box; max-height: 80vh; overflow-y: auto; }
-        .input-style { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; }
+        .modal-content { background: var(--white); width: 100%; padding: 25px; border-radius: 25px 25px 0 0; box-sizing: border-box; max-height: 90vh; overflow-y: auto; }
+        .input-style { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; font-size: 14px; }
         .btn-main { width: 100%; padding: 15px; background: var(--main); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        
+        .info-card { background: #f8f9fa; padding: 15px; border-radius: 12px; border: 1px dashed var(--main); margin: 10px 0; }
     </style>
 </head>
 <body>
@@ -61,21 +52,17 @@
     <div id="auth-page" style="display: none; position: fixed; inset: 0; background: #fff; z-index: 5000; flex-direction: column; align-items: center; justify-content: center; padding: 20px;">
         <h2 style="color: var(--main);">Ruslan Market</h2>
         <input type="text" id="reg-name" class="input-style" placeholder="Ismingiz">
-        <input type="tel" id="reg-phone" class="input-style" placeholder="Telefon (masalan: +998901234567)">
-        <select id="reg-region" class="input-style">
-            <option value="">Hududni tanlang</option>
-            <option>Toshkent</option><option>Samarqand</option><option>Andijon</option><option>Buxoro</option><option>Navoiy</option>
-        </select>
+        <input type="tel" id="reg-phone" class="input-style" placeholder="Telefon (+998...)">
         <button onclick="saveUser()" class="btn-main">Kirish</button>
     </div>
 
     <div class="header-search">
         <div class="search-box"><i class="fa fa-search"></i><input type="text" id="searchInput" oninput="filterProducts()" placeholder="Mahsulot qidirish..."></div>
-        <div class="categories" id="cat-list">
+        <div class="categories">
             <button class="cat-btn active" onclick="filterCat('all', this)">Hammasi</button>
             <button class="cat-btn" onclick="filterCat('clothing', this)">Kiyimlar</button>
             <button class="cat-btn" onclick="filterCat('shoes', this)">Poyabzallar</button>
-            <button class="cat-btn" onclick="filterCat('other', this)">Boshqa</button>
+            <button class="cat-btn" onclick="filterCat('other', this)">Aksessuarlar</button>
         </div>
     </div>
 
@@ -85,37 +72,42 @@
 
     <div id="lucky" class="page" style="text-align: center;">
         <h3>Omadli Baraban</h3>
-        <div style="background: var(--main); color: white; display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 13px; margin-bottom: 10px;">Imkoniyat: <span id="chance-count">0</span> ta</div>
-        <div style="position: relative; width: 280px; height: 280px; margin: 0 auto;">
-            <div style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 20px; height: 20px; background: #333; clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 10;"></div>
+        <div style="background: var(--main); color: white; display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 13px;">Imkoniyat: <span id="chance-count">0</span> ta</div>
+        <div style="position: relative; width: 280px; height: 280px; margin: 20px auto;">
+            <div style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 25px; height: 25px; background: #333; clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 10;"></div>
             <canvas id="canvas" width="300" height="300" style="width:100%; transition: transform 5s cubic-bezier(0.1, 0, 0.1, 1);"></canvas>
         </div>
-        <button id="spin-btn" onclick="spin()" class="btn-main" style="background: var(--orange); margin-top: 20px;">AYLANTIRISH</button>
+        <button id="spin-btn" onclick="spin()" class="btn-main" style="background: var(--orange);">AYLANTIRISH</button>
     </div>
 
     <div id="cart-page" class="page">
         <h3>Savat</h3>
         <div id="cart-items-container"></div>
-        <div id="cart-summary" style="margin-top: 20px; border-top: 1px solid #ddd; padding-top: 10px;">
-            <div style="display: flex; justify-content: space-between; font-weight: bold;">
+        <div id="cart-summary" style="margin-top: 20px; display:none;">
+            <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 18px; margin-bottom: 10px;">
                 <span>Jami summa:</span>
                 <span id="total-price">0 so'm</span>
             </div>
-            <button class="btn-main" onclick="checkout()">Buyurtma berish</button>
+            <button class="btn-main" onclick="openCheckoutModal()">Davom etish</button>
         </div>
     </div>
 
     <div id="profile" class="page">
         <div style="display: flex; align-items: center; background: white; padding: 20px; border-radius: 15px;">
-            <div style="width: 50px; height: 50px; background: var(--main); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px;"><i class="fa fa-user"></i></div>
-            <div style="margin-left: 15px;"><b id="p-name">...</b><br><small id="p-region" style="color: var(--gray);"></small></div>
+            <div style="width: 50px; height: 50px; background: var(--main); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i class="fa fa-user"></i></div>
+            <div style="margin-left: 15px;"><b id="p-name">Foydalanuvchi</b></div>
         </div>
-        <div class="menu-list" style="background: white; border-radius: 12px; margin-top: 15px; overflow: hidden;">
-            <div class="menu-item" onclick="openPage('cart-page', document.getElementById('nav-cart'))" style="padding: 15px; border-bottom: 1px solid #f4f5f7; display: flex; justify-content: space-between;">
-                <span><i class="fa fa-shopping-bag" style="color:var(--main); width: 25px;"></i> Buyurtmalarim</span> <i class="fa fa-chevron-right"></i>
+        <div style="background: white; border-radius: 12px; margin-top: 15px;">
+            <div style="padding: 15px; border-bottom: 1px solid #eee;" onclick="showAbout()">
+                <i class="fa fa-info-circle" style="color:var(--main); width: 25px;"></i> Biz haqimizda
             </div>
-            <div class="menu-item" onclick="localStorage.clear(); location.reload();" style="padding: 15px; color: var(--red);">
-                <span><i class="fa fa-right-from-bracket" style="width: 25px;"></i> Chiqish</span>
+            <div id="about-info" style="display:none; padding: 15px; font-size: 14px; background: #fafafa;">
+                <p><b>Manzil:</b> Amir Temur 3, 9-etaj, 65-kvartira</p>
+                <p><b>Tel:</b> +998943012687</p>
+                <p>Ruslan Market - Sifatli mahsulotlar manzili!</p>
+            </div>
+            <div style="padding: 15px; color: var(--red);" onclick="localStorage.clear(); location.reload();">
+                <i class="fa fa-right-from-bracket" style="width: 25px;"></i> Chiqish
             </div>
         </div>
     </div>
@@ -135,211 +127,220 @@
             <img id="detail-img" style="width: 100%; border-radius: 15px; height: 200px; object-fit: cover;">
             <h3 id="detail-title"></h3>
             <p id="detail-price" style="font-size: 20px; color: var(--main); font-weight: bold;"></p>
-            <label>O'lcham:</label>
+            <label>O'lcham tanlang:</label>
             <select id="detail-size" class="input-style"></select>
             <button class="btn-main" onclick="addToCart()">Savatga qo'shish</button>
         </div>
     </div>
 
-    <script>
-        let tg = window.Telegram.WebApp;
-        let cart = JSON.parse(localStorage.getItem('ruslan_cart')) || [];
-        let user = JSON.parse(localStorage.getItem('ruslan_v4')) || null;
-        let currentFilter = 'all';
-        let selectedProduct = null;
-
-        const products = [
-            {id: 1, name: "Qishki Kurtka Premium", price: 200000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=70951574663cbae2ac73b1f8a4f8a2ea3c06527a-9099023-images-thumbs&n=13"},
-            {id: 2, name: "Nike Air Max 270", price: 280000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=f1e7218c18bd5095bc3e5696f25fb4348235580a-4322265-images-thumbs&n=13"},
-            {id: 3, name: "Polo Dvoyka", price: 150000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=b8b693d50f4c2381d985a1c8f33d3cb0be4ca464-4027983-images-thumbs&n=13"},
-            {id: 4, name: "Klassik Shim", price: 99000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=410b6c32f91f6361a156b6f65a31f0c6d4faaf6f-5235890-images-thumbs&n=13"},
-            {id: 5, name: "Tufli Charm", price: 100000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=a0fe76efd8801116ec5dfd344f6f904cf2b54d3d-5236416-images-thumbs&n=13"},
-            {id: 6, name: "Hudi Oversize", price: 130000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=0820d25df2e30ed233e70414ddf08a298e916183-5307529-images-thumbs&n=13"},
-            {id: 7, name: "Rolex Watch", price: 350000, type: "other", img: "https://cdn1.ozone.ru/s3/multimedia-1-f/c600/7106545059.jpg"}
-        ];
-
-        const sectors = [
-            {label: "10%", color: "#FFCC00", weight: 80},
-            {label: "20%", color: "#FF9900", weight: 15},
-            {label: "50%", color: "#dc3545", weight: 5}
-        ];
-
-        window.onload = () => {
-            if(!user) document.getElementById('auth-page').style.display='flex';
-            else {
-                updateUI();
-                renderProducts(products);
-                drawWheel();
-            }
-        };
-
-        function saveUser() {
-            const n = document.getElementById('reg-name').value;
-            const p = document.getElementById('reg-phone').value;
-            const r = document.getElementById('reg-region').value;
-            if(n && p && r) {
-                user = {name:n, phone:p, region:r, chances:1, lastDate: new Date().toDateString(), promo: null};
-                localStorage.setItem('ruslan_v4', JSON.stringify(user));
-                location.reload();
-            }
-        }
-
-        function renderProducts(list) {
-            const container = document.getElementById('product-list');
-            container.innerHTML = list.map(p => {
-                const price = Math.round(p.price * 1.25);
-                return `
-                <div class="card" onclick="openDetail(${p.id})">
-                    <button class="fav-btn"><i class="fa fa-heart"></i></button>
-                    <img src="${p.img}">
-                    <div class="p-info">
-                        <div class="title">${p.name}</div>
-                        <div class="price">${price.toLocaleString()} so'm</div>
-                    </div>
-                </div>`;
-            }).join('');
-        }
-
-        function openDetail(id) {
-            selectedProduct = products.find(p => p.id === id);
-            document.getElementById('detail-img').src = selectedProduct.img;
-            document.getElementById('detail-title').innerText = selectedProduct.name;
-            document.getElementById('detail-price').innerText = (Math.round(selectedProduct.price * 1.25)).toLocaleString() + " so'm";
+    <div id="checkout-modal" class="modal" onclick="if(event.target==this) this.style.display='none'">
+        <div class="modal-content">
+            <h3>Buyurtmani rasmiylashtirish</h3>
             
-            const s = document.getElementById('detail-size');
-            if(selectedProduct.type === 'clothing') s.innerHTML = ["S","M","L","XL"].map(v => `<option>${v}</option>`).join('');
-            else if(selectedProduct.type === 'shoes') s.innerHTML = ["39","40","41","42","43"].map(v => `<option>${v}</option>`).join('');
-            else s.innerHTML = "<option>Standart</option>";
+            <div class="info-card">
+                <small>To'lov uchun Humo karta:</small><br>
+                <b>4073 4200 6735 5457</b><br>
+                <small>Gulzebo Xolboeva</small>
+                <button onclick="navigator.clipboard.writeText('4073420067355457'); alert('Nusxalandi!')" style="float:right; border:none; background:var(--main); color:white; border-radius:5px; padding:2px 8px;">Nusxa</button>
+            </div>
 
-            document.getElementById('detail-modal').style.display = 'flex';
-        }
-
-        function addToCart() {
-            const size = document.getElementById('detail-size').value;
-            const item = { ...selectedProduct, size, qty: 1, finalPrice: Math.round(selectedProduct.price * 1.25) };
+            <input type="text" id="chk-address" class="input-style" placeholder="Manzil (Uy, dom, podyezd...)">
+            <select id="chk-delivery" class="input-style">
+                <option value="Kuryer">Kuryer orqali yetkazish</option>
+                <option value="Pochta">Topshirish punkti (Pochta)</option>
+            </select>
+            <input type="text" id="chk-promo" class="input-style" placeholder="Promokod bormi?">
             
-            const existing = cart.find(c => c.id === item.id && c.size === size);
-            if(existing) existing.qty++;
-            else cart.push(item);
-            
-            saveCart();
-            document.getElementById('detail-modal').style.display = 'none';
-            tg.showScanQrPopup({text: "Savatga qo'shildi!"}); // Mock notification
-            setTimeout(() => tg.closeScanQrPopup(), 1000);
-        }
+            <div id="final-summary" style="margin: 10px 0; font-weight: bold; color: var(--green);"></div>
+            <button class="btn-main" onclick="completeOrder()">Buyurtmani yakunlash</button>
+        </div>
+    </div>
 
-        function saveCart() {
-            localStorage.setItem('ruslan_cart', JSON.stringify(cart));
-            updateUI();
-            renderCart();
-        }
+<script>
+    let tg = window.Telegram.WebApp;
+    let user = JSON.parse(localStorage.getItem('ruslan_user')) || null;
+    let cart = JSON.parse(localStorage.getItem('ruslan_cart')) || [];
+    let selectedProduct = null;
 
-        function updateUI() {
-            document.getElementById('cart-badge').innerText = cart.reduce((a, b) => a + b.qty, 0);
-            if(user) {
-                document.getElementById('p-name').innerText = user.name;
-                document.getElementById('p-region').innerText = user.region;
-                document.getElementById('chance-count').innerText = user.chances;
-            }
-        }
+    // 40 ta mahsulot ro'yxati (namuna sifatida asosiy turlari)
+    const products = [];
+    const names = ["Kurtka Premium", "Nike Air", "Klassik Shim", "Hudi Oversize", "Charm Tufli", "Sportivka", "Kasholok", "Soat Rolex"];
+    for(let i=1; i<=40; i++) {
+        products.push({
+            id: i,
+            name: names[i % names.length] + " #" + i,
+            price: 50000 + (i * 5000),
+            type: i % 3 === 0 ? "clothing" : (i % 3 === 1 ? "shoes" : "other"),
+            img: `https://picsum.photos/seed/${i+50}/300/300`
+        });
+    }
 
-        function renderCart() {
-            const container = document.getElementById('cart-items-container');
-            if(cart.length === 0) {
-                container.innerHTML = "<p style='text-align:center; color:gray;'>Savat bo'sh</p>";
-                document.getElementById('cart-summary').style.display = 'none';
-                return;
-            }
-            document.getElementById('cart-summary').style.display = 'block';
-            let total = 0;
-            container.innerHTML = cart.map((item, idx) => {
-                total += item.finalPrice * item.qty;
-                return `
-                <div class="cart-item">
-                    <img src="${item.img}">
-                    <div class="cart-details">
-                        <div style="font-size:14px; font-weight:bold;">${item.name}</div>
-                        <div style="font-size:12px; color:var(--gray);">O'lcham: ${item.size}</div>
-                        <div class="price">${(item.finalPrice * item.qty).toLocaleString()} so'm</div>
-                    </div>
-                    <div class="qty-controls">
-                        <button class="qty-btn" onclick="updateQty(${idx}, -1)">-</button>
-                        <span>${item.qty}</span>
-                        <button class="qty-btn" onclick="updateQty(${idx}, 1)">+</button>
-                    </div>
-                </div>`;
-            }).join('');
-            document.getElementById('total-price').innerText = total.toLocaleString() + " so'm";
-        }
+    const sectors = [{label:"10%", color:"#FFCC00"}, {label:"20%", color:"#FF9900"}, {label:"30%", color:"#7f46f0"}, {label:"40%", color:"#28a745"}, {label:"50%", color:"#dc3545"}, {label:"PRINTER", color:"#000"}];
 
-        function updateQty(idx, delta) {
-            cart[idx].qty += delta;
-            if(cart[idx].qty <= 0) cart.splice(idx, 1);
-            saveCart();
-        }
+    window.onload = () => {
+        if(!user) document.getElementById('auth-page').style.display='flex';
+        updateUI();
+        renderProducts(products);
+        drawWheel();
+    };
 
-        function checkout() {
-            let total = 0;
-            let text = `YANGI BUYURTMA 🛍\n\n`;
-            cart.forEach(item => {
-                const sum = item.finalPrice * item.qty;
-                total += sum;
-                text += `• ${item.name} (${item.size}) x${item.qty} = ${sum.toLocaleString()} so'm\n`;
-            });
-            text += `\n💵 Jami: ${total.toLocaleString()} so'm\n👤 Mijoz: ${user.name}\n📞 Tel: ${user.phone}`;
-            
-            window.location.href = `https://t.me/Ruslanbek20119?text=${encodeURIComponent(text)}`;
-            cart = [];
-            saveCart();
+    function saveUser() {
+        const n = document.getElementById('reg-name').value;
+        const p = document.getElementById('reg-phone').value;
+        if(n && p) {
+            user = {name:n, phone:p, chances:1};
+            localStorage.setItem('ruslan_user', JSON.stringify(user));
+            location.reload();
         }
+    }
 
-        function filterCat(cat, el) {
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
-            if(cat === 'all') renderProducts(products);
-            else renderProducts(products.filter(p => p.type === cat));
+    function renderProducts(list) {
+        document.getElementById('product-list').innerHTML = list.map(p => `
+            <div class="card" onclick="openDetail(${p.id})">
+                <img src="${p.img}">
+                <div class="p-info">
+                    <div class="title">${p.name}</div>
+                    <div class="price">${Math.round(p.price * 1.25).toLocaleString()} so'm</div>
+                </div>
+            </div>`).join('');
+    }
+
+    function openDetail(id) {
+        selectedProduct = products.find(p => p.id === id);
+        document.getElementById('detail-img').src = selectedProduct.img;
+        document.getElementById('detail-title').innerText = selectedProduct.name;
+        document.getElementById('detail-price').innerText = Math.round(selectedProduct.price * 1.25).toLocaleString() + " so'm";
+        
+        const s = document.getElementById('detail-size');
+        if(selectedProduct.type === 'clothing') s.innerHTML = ["S","M","L","XL"].map(v => `<option>${v}</option>`).join('');
+        else if(selectedProduct.type === 'shoes') s.innerHTML = ["38","39","40","41","42","43"].map(v => `<option>${v}</option>`).join('');
+        else s.innerHTML = "<option>Standart</option>";
+
+        document.getElementById('detail-modal').style.display = 'flex';
+    }
+
+    function addToCart() {
+        const size = document.getElementById('detail-size').value;
+        cart.push({...selectedProduct, size, finalPrice: Math.round(selectedProduct.price * 1.25)});
+        localStorage.setItem('ruslan_cart', JSON.stringify(cart));
+        updateUI();
+        document.getElementById('detail-modal').style.display = 'none';
+        tg.showAlert("Savatga qo'shildi!");
+    }
+
+    function updateUI() {
+        document.getElementById('cart-badge').innerText = cart.length;
+        if(user) {
+            document.getElementById('p-name').innerText = user.name;
+            document.getElementById('chance-count').innerText = user.chances;
         }
+    }
 
-        function filterProducts() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            renderProducts(products.filter(p => p.name.toLowerCase().includes(query)));
+    function renderCart() {
+        const container = document.getElementById('cart-items-container');
+        if(cart.length === 0) {
+            container.innerHTML = "<p style='text-align:center;'>Savat bo'sh</p>";
+            document.getElementById('cart-summary').style.display = 'none';
+            return;
         }
+        document.getElementById('cart-summary').style.display = 'block';
+        let total = 0;
+        container.innerHTML = cart.map((item, idx) => {
+            total += item.finalPrice;
+            return `
+            <div class="cart-item">
+                <img src="${item.img}" style="width:50px; height:50px; border-radius:5px;">
+                <div style="flex:1; margin-left:10px;">
+                    <b>${item.name}</b><br><small>${item.size} | ${item.finalPrice.toLocaleString()} so'm</small>
+                </div>
+                <button onclick="removeItem(${idx})" style="border:none; color:red; background:none;"><i class="fa fa-trash"></i></button>
+            </div>`;
+        }).join('');
+        document.getElementById('total-price').innerText = total.toLocaleString() + " so'm";
+    }
 
-        function openPage(id, el) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-            document.getElementById(id).classList.add('active-page');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            el.classList.add('active');
-            if(id === 'cart-page') renderCart();
-        }
+    function removeItem(idx) {
+        cart.splice(idx, 1);
+        localStorage.setItem('ruslan_cart', JSON.stringify(cart));
+        updateUI();
+        renderCart();
+    }
 
-        // Baraban drawing
-        function drawWheel() {
-            const canvas = document.getElementById('canvas');
-            const ctx = canvas.getContext('2d');
-            const arc = (2 * Math.PI) / sectors.length;
-            sectors.forEach((s, i) => {
-                const angle = i * arc;
-                ctx.fillStyle = s.color;
-                ctx.beginPath(); ctx.moveTo(150, 150); ctx.arc(150, 150, 145, angle, angle+arc); ctx.fill();
-                ctx.save(); ctx.translate(150, 150); ctx.rotate(angle + arc/2);
-                ctx.fillStyle = "white"; ctx.font = "bold 16px Arial"; ctx.fillText(s.label, 70, 5); ctx.restore();
-            });
-        }
+    function openCheckoutModal() {
+        document.getElementById('checkout-modal').style.display = 'flex';
+    }
 
-        function spin() {
-            if(user.chances <= 0) { tg.showAlert("Imkoniyat qolmadi"); return; }
-            user.chances--;
-            updateUI();
-            const canvasEl = document.getElementById('canvas');
-            const deg = 3600 + Math.random() * 360;
-            canvasEl.style.transform = `rotate(${deg}deg)`;
-            setTimeout(() => {
-                tg.showAlert("Tabriklaymiz! Siz yutuqni qo'lga kiritdingiz.");
-                localStorage.setItem('ruslan_v4', JSON.stringify(user));
-            }, 5000);
-        }
+    function completeOrder() {
+        const addr = document.getElementById('chk-address').value;
+        const deliv = document.getElementById('chk-delivery').value;
+        const promo = document.getElementById('chk-promo').value;
+        
+        if(!addr) { alert("Manzilni kiriting!"); return; }
 
-    </script>
+        let text = `YANGI BUYURTMA 🛍\n\n`;
+        let total = 0;
+        cart.forEach(i => {
+            text += `• ${i.name} (${i.size}) - ${i.finalPrice.toLocaleString()}\n`;
+            total += i.finalPrice;
+        });
+        
+        text += `\n💵 Jami: ${total.toLocaleString()} so'm`;
+        text += `\n📍 Manzil: ${addr}`;
+        text += `\n🚚 Yetkazish: ${deliv}`;
+        text += `\n🎟 Promokod: ${promo || "Yo'q"}`;
+        text += `\n👤 Mijoz: ${user.name}\n📞 Tel: ${user.phone}`;
+
+        window.location.href = `https://t.me/Ruslanbek20119?text=${encodeURIComponent(text)}`;
+        cart = [];
+        localStorage.setItem('ruslan_cart', JSON.stringify(cart));
+    }
+
+    function showAbout() {
+        const div = document.getElementById('about-info');
+        div.style.display = div.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function openPage(id, el) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+        document.getElementById(id).classList.add('active-page');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        el.classList.add('active');
+        if(id === 'cart-page') renderCart();
+    }
+
+    function filterCat(cat, el) {
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+        if(cat === 'all') renderProducts(products);
+        else renderProducts(products.filter(p => p.type === cat));
+    }
+
+    function filterProducts() {
+        const q = document.getElementById('searchInput').value.toLowerCase();
+        renderProducts(products.filter(p => p.name.toLowerCase().includes(q)));
+    }
+
+    // Wheel Logic
+    function drawWheel() {
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const arc = (2 * Math.PI) / sectors.length;
+        sectors.forEach((s, i) => {
+            ctx.fillStyle = s.color;
+            ctx.beginPath(); ctx.moveTo(150, 150); ctx.arc(150, 150, 145, i*arc, (i+1)*arc); ctx.fill();
+            ctx.save(); ctx.translate(150, 150); ctx.rotate(i*arc + arc/2);
+            ctx.fillStyle = "white"; ctx.fillText(s.label, 80, 5); ctx.restore();
+        });
+    }
+
+    function spin() {
+        if(user.chances <= 0) return;
+        user.chances--;
+        updateUI();
+        const deg = 3600 + Math.random() * 360;
+        document.getElementById('canvas').style.transform = `rotate(${deg}deg)`;
+        setTimeout(() => tg.showAlert("Barabanni aylantirganingiz uchun rahmat!"), 5000);
+    }
+</script>
 </body>
 </html>
