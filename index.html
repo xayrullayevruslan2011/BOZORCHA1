@@ -63,7 +63,7 @@
         </div>
         <select id="p-size" class="inp"></select>
         <input type="text" id="promo-code" class="inp" placeholder="Promokod (RUSLAN...)" oninput="checkPromo()">
-        <button onclick="sendOrder()" style="background:#28a745; color:white;" class="btn-reg">To'lovni tasdiqlash</button>
+        <button onclick="sendOrder()" style="background:#28a745; color:white;" class="btn-reg">Payme orqali to'lash</button>
     </div>
 </div>
 
@@ -170,28 +170,42 @@
 
     async function sendOrder() {
         const user = JSON.parse(localStorage.getItem('ruslan_user'));
-        const total = selectedP.finalPrice || selectedP.rawPrice;
+        const totalStr = selectedP.finalPrice || selectedP.rawPrice;
         const size = document.getElementById('p-size').value;
 
+        // Backend ma'lumotlari
         const orderData = {
             user_name: user.name,
             phone: user.phone,
             product: selectedP.name,
-            price: total,
+            price: totalStr,
             size: size
         };
 
         try {
-            await fetch(`${BACKEND_URL}/api/orders`, {
+            // Serverga saqlash va Payme linkini olish
+            const response = await fetch(`${BACKEND_URL}/api/orders`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(orderData)
             });
-        } catch (e) { console.error("Serverga saqlashda xato:", e); }
+            
+            const result = await response.json();
+            
+            if (result.pay_url) {
+                // Statusni kutish rejimiga o'tkazish
+                localStorage.setItem('my_order', JSON.stringify({name: selectedP.name, date: Date.now(), status: "waiting"}));
+                
+                // Payme sahifasiga yo'naltirish
+                window.location.href = result.pay_url;
+            } else {
+                throw new Error("To'lov linki olinmadi");
+            }
 
-        localStorage.setItem('my_order', JSON.stringify({name: selectedP.name, date: Date.now(), status: "waiting"}));
-        const text = `💳 TO'LOV QILINDI\n📦: ${selectedP.name}\n💰: ${total} so'm\n📏: ${size}\n👤: ${user.name}\n📞: ${user.phone}\n\n(Iltimos, tekshirib tasdiqlang!)`;
-        window.location.href = `https://t.me/Ruslanbek20119?text=${encodeURIComponent(text)}`;
+        } catch (e) { 
+            console.error("Xato:", e); 
+            tg.showAlert("Xatolik: Serverga ulanib bo'lmadi!");
+        }
     }
     
     function updateStatus() {
