@@ -5,7 +5,6 @@ import base64
 
 app = FastAPI()
 
-# Frontend bilan bog'lanish uchun ruxsat berish
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -13,7 +12,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Buyurtmalar uchun ma'lumotlar modeli
 class Order(BaseModel):
     user_name: str
     phone: str
@@ -21,44 +19,32 @@ class Order(BaseModel):
     price: str
     size: str
 
-# Vaqtincha buyurtmalarni saqlash uchun ro'yxat
 db_orders = []
 
 @app.get("/")
 def read_root():
-    return {"status": "Ruslan Market Backend ishlamoqda!", "payme_integration": "active"}
+    return {"status": "Ruslan Market Backend is running!"}
 
 @app.post("/api/orders")
 async def create_order(order: Order):
-    # 1. Buyurtmani terminalda chiqarish va bazaga qo'shish
-    print(f"Yangi buyurtma qabul qilindi: {order.user_name} - {order.product}")
     db_orders.append(order.dict())
     
-    # 2. To'lov summasini raqamga aylantirish (masalan: "250 000" -> 250000)
+    # Summani raqamga aylantirish (masalan: "250,000 so'm" -> 250000)
     try:
-        clean_price = int(''.join(filter(str.isdigit, order.price)))
-    except ValueError:
-        clean_price = 0
+        clean_amount = int(''.join(filter(str.isdigit, order.price))) * 100 # Tiyinda
+    except:
+        clean_amount = 0
 
-    # 3. Payme checkout linkini generatsiya qilish
-    # DIQQAT: 'ruslan_market' o'rniga o'z kassa nomingizni yozishingiz mumkin
-    merchant_id = "ruslan_market" 
-    amount_tiyin = clean_price * 100  # Payme summani tiyinda qabul qiladi
+    # PAYME INTEGRATSIYASI
+    MERCHANT_ID = "SIZNING_PAYME_ID_SHU_YERGA" # Payme Business-dan oling
     
-    # Payme talab qiladigan formatni tayyorlash
-    pay_params = f"m={merchant_id};ac.order_id={len(db_orders)};a={amount_tiyin}"
-    
-    # Base64 formatiga kodlash
-    encoded_params = base64.b64encode(pay_params.encode()).decode()
-    payme_checkout_url = f"https://checkout.payme.uz/{encoded_params}"
+    # Payme linki formati
+    params = f"m={MERCHANT_ID};ac.order_id={len(db_orders)};a={clean_amount}"
+    encode_params = base64.b64encode(params.encode()).decode()
+    pay_url = f"https://checkout.payme.uz/{encode_params}"
 
-    return {
-        "status": "ok",
-        "message": "Buyurtma bazaga saqlandi",
-        "pay_url": payme_checkout_url
-    }
+    return {"status": "ok", "pay_url": pay_url}
 
 @app.get("/api/admin/orders")
 async def get_all_orders():
-    # Barcha buyurtmalarni ko'rish uchun (Admin uchun)
     return db_orders
