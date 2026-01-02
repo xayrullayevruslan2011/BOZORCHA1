@@ -3,45 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ruslan Market | Karta bilan To'lov</title>
+    <title>Ruslan Market | Uzum Style</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --main: #7f46f0; --orange: #ff9800; --green: #28a745; --blue: #007bff; --red: #dc3545; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; padding-bottom: 80px; }
+        
         #auth-page { position: fixed; inset: 0; background: #fff; z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .auth-card { width: 100%; max-width: 320px; text-align: center; }
         .inp { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; }
         .btn-reg { width: 100%; padding: 15px; background: var(--main); color: #fff; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
+        
         header { background: #fff; padding: 15px; text-align: center; border-bottom: 2px solid var(--main); position: sticky; top: 0; z-index: 1000; }
         .container { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .card { background: #fff; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; }
-        .card img { width: 100%; height: 140px; object-fit: cover; background: #eee; }
+        .card img { width: 100%; height: 160px; object-fit: cover; background: #eee; }
         .p-info { padding: 10px; }
-        .price { color: var(--main); font-weight: bold; font-size: 14px; }
-        .title { font-size: 13px; font-weight: 500; height: 35px; overflow: hidden; }
+        .price { color: #000; font-weight: bold; font-size: 15px; }
+        .title { font-size: 13px; color: #444; height: 35px; overflow: hidden; margin-bottom: 5px; }
+
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #ddd; z-index: 1000; }
         .nav-item { border: none; background: none; font-size: 11px; color: #666; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
         .active { color: var(--main); font-weight: bold; }
-        
-        /* --- Uzum Style Modal --- */
+
+        /* Uzum Modal */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center; padding: 10px; }
         .modal-content { 
-            background: #fff; width: 100%; max-width: 800px; padding: 20px; border-radius: 20px; 
-            display: flex; flex-direction: row; gap: 20px; text-align: left; box-sizing: border-box; 
+            background: #fff; width: 95%; max-width: 750px; border-radius: 20px; overflow: hidden;
+            display: flex; flex-direction: row; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
         }
-        .m-left { flex: 1; display: flex; align-items: center; justify-content: center; }
-        .m-left img { width: 100%; max-height: 350px; object-fit: contain; border-radius: 12px; }
-        .m-right { flex: 1; display: flex; flex-direction: column; }
-        .uzum-price-box { background: #f4f5f7; padding: 15px; border-radius: 12px; margin-bottom: 10px; }
+        .m-left { flex: 1.2; background: #fff; display: flex; align-items: center; justify-content: center; padding: 10px; }
+        .m-left img { width: 100%; max-height: 400px; object-fit: contain; border-radius: 15px; }
+        .m-right { flex: 1; padding: 25px; display: flex; flex-direction: column; border-left: 1px solid #eee; }
+        .uzum-price-box { background: #f8f8f8; padding: 15px; border-radius: 12px; margin: 15px 0; }
+        .card-box { background: #f3f0ff; border: 1px dashed var(--main); padding: 10px; border-radius: 12px; margin-bottom: 10px; }
         
-        @media (max-width: 600px) {
+        @media (max-width: 650px) {
             .modal-content { flex-direction: column; max-height: 90vh; overflow-y: auto; }
-            .m-left img { max-height: 200px; }
+            .m-right { border-left: none; padding: 20px; }
         }
-        /* ----------------------- */
 
-        .card-box { background: #f3f0ff; border: 1px dashed var(--main); padding: 10px; border-radius: 12px; margin: 10px 0; }
-        .status-box { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--orange); text-align: left; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .status-box { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--orange); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
@@ -51,7 +53,7 @@
         <h2 style="color: var(--main);">Xush kelibsiz!</h2>
         <input type="text" id="reg-name" class="inp" placeholder="Ismingiz">
         <input type="tel" id="reg-phone" class="inp" placeholder="Telefon raqamingiz">
-        <button class="btn-reg" onclick="saveUser()">Do'konga kirish</button>
+        <button class="btn-reg" onclick="saveUser()">Kirish</button>
     </div>
 </div>
 
@@ -70,28 +72,21 @@
 
 <div id="order-modal" class="modal" onclick="if(event.target==this) closeModal()">
     <div class="modal-content">
-        <div class="m-left">
-            <img id="m-img" src="" alt="product">
-        </div>
+        <div class="m-left"><img id="m-img" src=""></div>
         <div class="m-right">
-            <h3 id="m-title" style="margin: 0 0 10px 0;"></h3>
+            <h2 id="m-title" style="margin:0; font-size: 18px;"></h2>
             <div class="uzum-price-box">
-                <div id="m-price" style="font-size: 24px; color: #000; font-weight: bold;"></div>
-                <small style="color: #8b8e99;">Yetkazib berish: 1 kun, bepul</small>
+                <div id="m-price" style="font-size: 22px; font-weight: bold;"></div>
+                <small style="color: var(--green);">Sotuvda mavjud</small>
             </div>
-            
             <div class="card-box">
-                <small>To'lov uchun karta (Humo):</small><br>
+                <small>Karta (Humo):</small><br>
                 <b id="card-num">4073420067355457</b>
-                <button onclick="copyCard()" style="font-size:10px; border:none; background:none; color:var(--main); cursor:pointer;">Nusxa</button>
+                <button onclick="copyCard()" style="border:none; background:none; color:var(--main); cursor:pointer;">[Nusxa]</button>
             </div>
-
-            <label style="font-size: 12px; color: #666;">O'lchamni tanlang:</label>
             <select id="p-size" class="inp"></select>
-            
-            <input type="text" id="promo-code" class="inp" placeholder="Promokod (RUSLAN...)" oninput="checkPromo()">
-            
-            <button onclick="sendOrder()" style="background: var(--main); margin-top: 10px;" class="btn-reg">Payme orqali to'lash</button>
+            <input type="text" id="promo-code" class="inp" placeholder="Promokod" oninput="checkPromo()">
+            <button id="pay-btn" onclick="sendOrder()" class="btn-reg">Payme orqali to'lash</button>
         </div>
     </div>
 </div>
@@ -99,10 +94,7 @@
 <script>
     let tg = window.Telegram.WebApp;
     tg.expand();
-
     const BACKEND_URL = "https://bozorcha1.onrender.com";
-
-    function up25(p) { return Math.round(p * 1.25).toLocaleString(); }
 
     const products = [
         {name: "Qishki Kurtka Premium", price: 200000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=70951574663cbae2ac73b1f8a4f8a2ea3c06527a-9099023-images-thumbs&n=13"},
@@ -147,25 +139,19 @@
         {name: "Charm Qo'lqop", price: 55000, type: "other", img: "https://avatars.mds.yandex.net/i?id=c327df75519325dabc72349597d1129978a636c8-4577841-images-thumbs&n=13"}
     ];
 
+    function up25(p) { return Math.round(p * 1.25).toLocaleString(); }
     window.onload = () => { if (!localStorage.getItem('ruslan_user')) document.getElementById('auth-page').style.display = 'flex'; renderProducts(); }
     
     function saveUser() {
-        const name = document.getElementById('reg-name').value;
-        const phone = document.getElementById('reg-phone').value;
-        if (name.length > 2 && phone.length > 6) { 
-            localStorage.setItem('ruslan_user', JSON.stringify({name, phone})); 
-            document.getElementById('auth-page').style.display = 'none'; 
-        }
+        const n = document.getElementById('reg-name').value, p = document.getElementById('reg-phone').value;
+        if (n.length > 2 && p.length > 6) { localStorage.setItem('ruslan_user', JSON.stringify({name:n, phone:p})); document.getElementById('auth-page').style.display = 'none'; }
     }
 
     function renderProducts() { 
         document.getElementById('product-list').innerHTML = products.map(p => `
             <div class="card" onclick="openOrder('${p.name}', '${up25(p.price)}', '${p.type}', '${p.img}')">
                 <img src="${p.img}">
-                <div class="p-info">
-                    <div class="title"><b>${p.name}</b></div>
-                    <div class="price">${up25(p.price)} so'm</div>
-                </div>
+                <div class="p-info"><div class="title">${p.name}</div><div class="price">${up25(p.price)} so'm</div></div>
             </div>`).join(''); 
     }
 
@@ -174,164 +160,70 @@
         selectedP = {name, price, rawPrice: price, img};
         document.getElementById('m-title').innerText = name;
         document.getElementById('m-price').innerText = price + " so'm";
-        document.getElementById('m-img').src = img; // Rasmni yuklash
-        
+        document.getElementById('m-img').src = img;
         const s = document.getElementById('p-size');
         if(type==="clothing") s.innerHTML = ["S","M","L","XL","XXL"].map(x=>`<option>${x}</option>`).join('');
         else if(type==="shoes") s.innerHTML = ["38","39","40","41","42","43","44"].map(x=>`<option>${x}</option>`).join('');
         else s.innerHTML = "<option>Standart</option>";
-        
         document.getElementById('order-modal').style.display = 'flex';
     }
 
+    function closeModal() { document.getElementById('order-modal').style.display='none'; }
     function copyCard() { navigator.clipboard.writeText(document.getElementById('card-num').innerText); tg.showAlert("Nusxalandi!"); }
-    
+
     function checkPromo() {
         const val = document.getElementById('promo-code').value.toUpperCase();
         let p = parseInt(selectedP.rawPrice.replace(/\D/g, ''));
         if(val.startsWith("RUSLAN") && val.length > 6) {
             let d = Math.round(p * 0.75);
-            let formatted = d.toLocaleString();
-            document.getElementById('m-price').innerHTML = `<del style="color:red; font-size:15px;">${selectedP.rawPrice}</del> ${formatted} so'm`;
-            selectedP.finalPrice = formatted;
-        } else { 
-            document.getElementById('m-price').innerText = selectedP.rawPrice + " so'm"; 
-            delete selectedP.finalPrice; 
-        }
+            document.getElementById('m-price').innerHTML = `<del style="color:red; font-size:14px;">${selectedP.rawPrice}</del> ${d.toLocaleString()} so'm`;
+            selectedP.finalPrice = d.toLocaleString();
+        } else { document.getElementById('m-price').innerText = selectedP.rawPrice + " so'm"; delete selectedP.finalPrice; }
     }
 
     async function sendOrder() {
-        const user = JSON.parse(localStorage.getItem('ruslan_user'));
-        const totalStr = selectedP.finalPrice || selectedP.rawPrice;
-        const size = document.getElementById('p-size').value;
-
-        const orderData = {
-            user_name: user.name,
-            phone: user.phone,
-            product: selectedP.name,
-            price: totalStr,
-            size: size
-        };
-
+        const user = JSON.parse(localStorage.getItem('ruslan_user')), total = selectedP.finalPrice || selectedP.rawPrice;
+        const btn = document.getElementById('pay-btn'); btn.innerText = "Yuklanmoqda..."; btn.disabled = true;
         try {
-            const response = await fetch(`${BACKEND_URL}/api/orders`, {
+            const res = await fetch(`${BACKEND_URL}/api/orders`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(orderData)
+                body: JSON.stringify({user_name: user.name, phone: user.phone, product: selectedP.name, price: total, size: document.getElementById('p-size').value})
             });
-            
-            const result = await response.json();
-            
+            const result = await res.json();
             if (result.pay_url) {
                 localStorage.setItem('my_order', JSON.stringify({name: selectedP.name, date: Date.now(), status: "waiting"}));
                 window.location.href = result.pay_url;
-            } else {
-                throw new Error("To'lov linki olinmadi");
-            }
-
-        } catch (e) { 
-            console.error("Xato:", e); 
-            tg.showAlert("Xatolik: Serverga ulanib bo'lmadi!");
-        }
-    }
-    
-    function updateStatus() {
-        const order = JSON.parse(localStorage.getItem('my_order'));
-        const container = document.getElementById('order-status-list');
-        if(!order) { container.innerHTML = "<p style='text-align:center;'>Buyurtma yo'q</p>"; return; }
-        
-        if(order.status === "rejected") {
-            container.innerHTML = `<div class="status-box" style="border-left: 5px solid var(--red);">
-                <b>${order.name}</b><br>
-                <span style="color:var(--red); font-weight:bold;">❌ To'lov tasdiqlanmadi</span><br>
-                <small>Admin to'lovni rad etdi. Iltimos, qaytadan buyurtma bering.</small><br><br>
-                <button onclick="localStorage.removeItem('my_order'); showPage('shop', document.querySelectorAll('.nav-item')[0])" style="background:var(--red); color:white; border:none; padding:8px; border-radius:8px;">Qaytadan buyurtma berish</button>
-            </div>`;
-            return;
-        }
-
-        if(order.status === "received") {
-            container.innerHTML = `<div class="status-box" style="border-left: 5px solid var(--green);">
-                <b>${order.name}</b><br>
-                <span style="color:var(--green); font-weight:bold;">✅ Yetkazib berildi!</span><br>
-                <small>Xaridingiz uchun rahmat. Buyurtma yakunlandi.</small><br><br>
-                <button onclick="localStorage.removeItem('my_order'); showPage('shop', document.querySelectorAll('.nav-item')[0])" style="background:var(--main); color:white; border:none; padding:8px; border-radius:8px;">Yangi buyurtma</button>
-            </div>`;
-            return;
-        }
-
-        if(order.status === "confirmed") {
-            container.innerHTML = `<div class="status-box" style="border-left: 5px solid var(--green);">
-                <b>${order.name}</b><br>
-                <span style="color:var(--green); font-weight:bold;">🚀 Tasdiqlandi. Xitoydan yo'lga chiqdi 🇨🇳</span><br>
-                <small style="color:#888;">Buyurtma vaqti: ${new Date(order.date).toLocaleString()}</small>
-                <div style="margin-top:10px; padding:10px; background:#f9f9f9; border-radius:8px;">
-                    <small>Admin boshqaruvi (GET777):</small><br>
-                    <input type="text" id="admin-code-input" placeholder="Kod..." style="width:50%; padding:5px;">
-                    <button onclick="checkAdminCode()">OK</button>
-                </div>
-            </div>`;
-            return;
-        }
-
-        const farqMinut = Math.floor((Date.now() - order.date) / (1000 * 60));
-        let st, rang, belgi;
-        if (farqMinut < 120) { st = "To'lov tekshirilmoqda..."; rang = "var(--orange)"; belgi = "⏳"; }
-        else if (farqMinut >= 120 && farqMinut < 4320) { st = "Tasdiqlandi. Xitoydan yo'lga chiqdi 🇨🇳"; rang = "var(--green)"; belgi = "🚀"; }
-        else { st = "O'zbekistonga kelmoqda 🇺🇿"; rang = "var(--blue)"; belgi = "🚛"; }
-
-        container.innerHTML = `<div class="status-box" style="border-left: 5px solid ${rang};">
-            <b>${order.name}</b><br>
-            <span style="color:${rang}; font-weight:bold;">${belgi} ${st}</span><br>
-            <small style="color:#888;">Buyurtma vaqti: ${new Date(order.date).toLocaleString()}</small>
-            <div style="margin-top:15px; background:#f0f0f0; padding:10px; border-radius:8px; border: 1px solid #ddd;">
-                <p style="font-size:10px; margin:0 0 5px 0; color:#444;"><b>Admin uchun boshqaruv:</b></p>
-                <input type="text" id="admin-code-input" placeholder="Kodni kiriting..." style="width:60%; padding:6px; font-size:11px; border:1px solid #ccc; border-radius:4px;">
-                <button onclick="checkAdminCode()" style="padding:7px; font-size:10px; background:var(--main); color:white; border:none; border-radius:4px; cursor:pointer;">OK</button>
-                <div style="margin-top:5px; font-size:9px; color:#666;">
-                    Tasdiqlash: <b>OK777</b> | Rad: <b>XATO777</b> | Qabul: <b>GET777</b> | Bekor: <b>DELETE777</b>
-                </div>
-            </div>
-        </div>`;
-    }
-
-    function checkAdminCode() {
-        const codeInput = document.getElementById('admin-code-input');
-        const code = codeInput.value.toUpperCase();
-        let order = JSON.parse(localStorage.getItem('my_order'));
-        
-        if(code === "XATO777") {
-            order.status = "rejected";
-            localStorage.setItem('my_order', JSON.stringify(order));
-            tg.showAlert("To'lov rad etildi!");
-        } else if(code === "OK777") {
-            order.status = "confirmed";
-            localStorage.setItem('my_order', JSON.stringify(order));
-            tg.showAlert("Muvaffaqiyatli tasdiqlandi!");
-        } else if(code === "GET777") {
-            order.status = "received";
-            localStorage.setItem('my_order', JSON.stringify(order));
-            tg.showAlert("Buyurtma qabul qilingan deb belgilandi!");
-        } else if(code === "DELETE777") {
-            localStorage.removeItem('my_order');
-            tg.showAlert("Buyurtma butunlay o'chirildi!");
-            showPage('shop', document.querySelectorAll('.nav-item')[0]);
-            return;
-        } else {
-            tg.showAlert("Noto'g'ri kod!");
-            return;
-        }
-        updateStatus();
+            } else { tg.showAlert("Xatolik yuz berdi!"); }
+        } catch (e) { tg.showAlert("Server ulanmadi!"); }
+        finally { btn.innerText = "Payme orqali to'lash"; btn.disabled = false; }
     }
 
     function showPage(p, b) {
         document.getElementById('shop-page').style.display = p === 'shop' ? 'block' : 'none';
         document.getElementById('orders-page').style.display = p === 'orders' ? 'block' : 'none';
         document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
-        if(b) b.classList.add('active'); 
-        if(p === 'orders') updateStatus();
+        if(b) b.classList.add('active'); if(p === 'orders') updateStatus();
     }
-    function closeModal() { document.getElementById('order-modal').style.display='none'; }
+
+    function updateStatus() {
+        const order = JSON.parse(localStorage.getItem('my_order')), container = document.getElementById('order-status-list');
+        if(!order) { container.innerHTML = "<p>Buyurtma yo'q</p>"; return; }
+        let st = "To'lov tekshirilmoqda...", rang = "var(--orange)";
+        if(order.status === "confirmed") { st = "Yo'lga chiqdi 🚀"; rang = "var(--green)"; }
+        if(order.status === "rejected") { st = "Rad etildi ❌"; rang = "var(--red)"; }
+        container.innerHTML = `<div class="status-box" style="border-left:5px solid ${rang}"><b>${order.name}</b><br><span style="color:${rang}">${st}</span><br><input type="text" id="admin-code-input" placeholder="Kod" style="margin-top:5px; padding:3px;"><button onclick="checkAdminCode()">OK</button></div>`;
+    }
+
+    function checkAdminCode() {
+        const code = document.getElementById('admin-code-input').value.toUpperCase();
+        let order = JSON.parse(localStorage.getItem('my_order'));
+        if(code === "OK777") order.status = "confirmed";
+        else if(code === "XATO777") order.status = "rejected";
+        else if(code === "DELETE777") { localStorage.removeItem('my_order'); showPage('shop'); return; }
+        else { tg.showAlert("Kod noto'g'ri!"); return; }
+        localStorage.setItem('my_order', JSON.stringify(order)); updateStatus();
+    }
 </script>
 </body>
 </html>
