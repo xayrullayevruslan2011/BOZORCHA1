@@ -40,11 +40,9 @@
         }
 
         .uzum-price-box { background: #f8f8f8; padding: 12px; border-radius: 12px; margin: 10px 0; }
-        .tg-style-box { text-align: left; background: #fff; border-radius: 12px; animation: fadeIn 0.3s; }
+        .tg-style-box { text-align: left; background: #fff; border-radius: 12px; }
         .tg-style-box p { margin: 8px 0; font-size: 14px; line-height: 1.4; }
         .status-box { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--orange); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -74,7 +72,8 @@
 <div id="order-modal" class="modal" onclick="if(event.target==this) closeModal()">
     <div class="modal-content">
         <div class="m-left"><img id="m-img" src=""></div>
-        <div id="m-right-panel" class="m-right"></div>
+        <div id="m-right-panel" class="m-right">
+            </div>
     </div>
 </div>
 
@@ -118,7 +117,7 @@
         {name: "Kargo Shim", price: 155000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=527c6bf4959b7393e145d6331eb86d1997330a50-12190079-images-thumbs&n=13"},
         {name: "Zontik", price: 50000, type: "other", img: "https://avatars.mds.yandex.net/i?id=f95de4ef87a20fd80cb0e69b943300478b24de5d-8236365-images-thumbs&n=13"},
         {name: "Soch Fen", price: 100000, type: "other", img: "https://avatars.mds.yandex.net/i?id=cfb4f0cc27e67359417b63ee89935b1df007ce1e-5166135-images-thumbs&n=13"},
-        {name: "Printercha", price: 95000, type: "other", img: "https://avatars.mds.yandex.net/i?id=4cbef11efd3ef5b256645f41bc7445940bd2f73f-10108411-images-thumbs&n=13"},
+        {name: "Printercha", price: 95000, type: "other", img: "https://avatars.mds.yandex.net/i?id=4cbef11efd3ef5256645f41bc7445940bd2f73f-10108411-images-thumbs&n=13"},
         {name: "Fila Sneakers", price: 220000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=8234a6722a98b9f5722c181de9122965a81b52c0-5470361-images-thumbs&n=13"},
         {name: "Quloqchin", price: 30000, type: "other", img: "https://avatars.mds.yandex.net/i?id=07095e2b6bb3c1258f1bbe260580632124a5c502-5115418-images-thumbs&n=13"},
         {name: "Sandali", price: 80000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=e93e7e435d7594b6d12a37d39f75fdba38b22977-5642274-images-thumbs&n=13"},
@@ -126,8 +125,8 @@
         {name: "Charm Qo'lqop", price: 55000, type: "other", img: "https://avatars.mds.yandex.net/i?id=c327df75519325dabc72349597d1129978a636c8-4577841-images-thumbs&n=13"}
     ];
 
-    function calcPrice60(p) { return Math.round(p * 1.6).toLocaleString(); }
-
+    function up25(p) { return Math.round(p * 1.25).toLocaleString(); }
+    
     window.onload = () => { 
         if (!localStorage.getItem('ruslan_user')) document.getElementById('auth-page').style.display = 'flex'; 
         renderProducts(); 
@@ -143,18 +142,18 @@
 
     function renderProducts() { 
         document.getElementById('product-list').innerHTML = products.map(p => `
-            <div class="card" onclick="openOrder('${p.name}', '${calcPrice60(p.price)}', '${p.type}', '${p.img}')">
+            <div class="card" onclick="openOrder('${p.name}', '${up25(p.price)}', '${p.type}', '${p.img}')">
                 <img src="${p.img}">
                 <div class="p-info">
                     <div class="title">${p.name}</div>
-                    <div class="price">${calcPrice60(p.price)} so'm</div>
+                    <div class="price">${up25(p.price)} so'm</div>
                 </div>
             </div>`).join(''); 
     }
 
     let selectedP = {};
     function openOrder(name, price, type, img) {
-        selectedP = {name, price, type, img};
+        selectedP = {name, price, img};
         const sOptions = type === "clothing" ? ["S","M","L","XL","XXL"] : (type === "shoes" ? ["38","39","40","41","42","43","44"] : ["Standart"]);
         
         document.getElementById('m-img').src = img;
@@ -167,13 +166,13 @@
             <label style="font-size:11px; color:#666;">O'lchamni tanlang:</label>
             <select id="p-size" class="inp">${sOptions.map(x=>`<option>${x}</option>`).join('')}</select>
             <input type="text" id="promo-code" class="inp" placeholder="Promokod">
-            <button id="pay-btn" onclick="showTelegramPayment()" class="btn-reg" style="margin-top:10px;">Xarid qilish</button>
+            <button id="pay-btn" onclick="showPaymentStep()" class="btn-reg" style="margin-top:10px;">Xarid qilish</button>
             <button onclick="closeModal()" style="background:none; border:none; color:#999; margin-top:10px; font-size:12px; cursor:pointer;">Yopish</button>
         `;
         document.getElementById('order-modal').style.display = 'flex';
     }
 
-    function showTelegramPayment() {
+    function showPaymentStep() {
         const paymentId = Math.floor(Math.random() * 90000) + 10000;
         const size = document.getElementById('p-size').value;
         
@@ -184,7 +183,7 @@
                 <p>🆔 <b>To'lov ID:</b> ${paymentId}</p>
                 <p>💰 <b>Miqdori:</b> ${selectedP.price} so'm</p>
                 <p>💳 <b>To'lov uchun:</b> <br>
-                   <b style="font-size:16px; color:var(--blue);">9860 6067 4362 3799</b> 
+                   <b style="font-size:16px; color:var(--blue);">4073 4200 6735 5457</b> 
                    <button onclick="copyCard()" style="border:none; background:none; color:var(--main); cursor:pointer; font-weight:bold;">[Nusxa]</button>
                 </p>
                 <p>👤 <b>I.F.O:</b> RUSLAN M.</p>
@@ -202,10 +201,11 @@
         const btn = document.getElementById('final-btn');
         btn.innerText = "Yuborilmoqda..."; btn.disabled = true;
 
-        // Rasmda ko'rsatilgan formatda botga yuboriladigan xabar
-        const botMsg = `✅ To'lov miqdori qabul qilindi!\n\n🆔 To'lov ID: ${id}\n💰 Miqdori: ${selectedP.price} so'm\n💳 To'lov uchun: 9860 6067 4362 3799\n👤 I.F.O: RUSLAN M.\n⏰ Vaqt: 5 daqiqa\n\n🛍 Mahsulot: ${selectedP.name}\n📏 O'lcham: ${size}\n👤 Mijoz: ${user.name}\n📞 Tel: ${user.phone}\n\nTo'lov qildim 💰`;
+        // Botga yuboriladigan formatlangan matn
+        const botMsg = `✅ To'lov miqdori qabul qilindi!\n\n🆔 To'lov ID: ${id}\n💰 Miqdori: ${selectedP.price} so'm\n💳 Karta: 4073 4200 6735 5457\n👤 I.F.O: RUSLAN M.\n\n🛍 Mahsulot: ${selectedP.name}\n📏 O'lcham: ${size}\n👤 Mijoz: ${user.name}\n📞 Tel: ${user.phone}\n\nTo'lov qildim 💰`;
 
         try {
+            // Backendga yuborish
             await fetch(`${BACKEND_URL}/api/orders`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -222,12 +222,13 @@
             window.location.href = `https://t.me/Ruslanbek20119?text=${encodeURIComponent(botMsg)}`;
             
         } catch (e) {
+            // Xatolik bo'lsa ham botga yuboraveradi
             window.location.href = `https://t.me/Ruslanbek20119?text=${encodeURIComponent(botMsg)}`;
         }
     }
 
     function closeModal() { document.getElementById('order-modal').style.display='none'; }
-    function copyCard() { navigator.clipboard.writeText("9860606743623799"); tg.showAlert("Karta raqami nusxalandi!"); }
+    function copyCard() { navigator.clipboard.writeText("4073420067355457"); tg.showAlert("Nusxalandi!"); }
 
     function showPage(p, b) {
         document.getElementById('shop-page').style.display = p === 'shop' ? 'block' : 'none';
@@ -247,7 +248,7 @@
             <div class="status-box" style="border-left:5px solid ${rang}">
                 <b>${order.name}</b><br>
                 <span style="color:${rang}">${st}</span><br>
-                <input type="text" id="admin-code-input" placeholder="Admin kod" style="margin-top:8px; padding:5px; width:80px;">
+                <input type="text" id="admin-code-input" placeholder="Kod" style="margin-top:8px; padding:5px; width:80px;">
                 <button onclick="checkAdminCode()" style="margin-left:5px;">OK</button>
             </div>`;
     }
@@ -258,8 +259,9 @@
         if(code === "OK777") order.status = "confirmed";
         else if(code === "XATO777") order.status = "rejected";
         else if(code === "DELETE777") { localStorage.removeItem('my_order'); showPage('shop'); return; }
-        else { tg.showAlert("Kod xato!"); return; }
-        localStorage.setItem('my_order', JSON.stringify(order)); updateStatus();
+        else { tg.showAlert("Kod noto'g'ri!"); return; }
+        localStorage.setItem('my_order', JSON.stringify(order)); 
+        updateStatus();
     }
 </script>
 </body>
