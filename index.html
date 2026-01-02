@@ -77,7 +77,7 @@
     </div>
 
     <div id="profile" class="page">
-        <div style="display: flex; align-items: center; padding: 20px 0;"><div style="width: 60px; height: 60px; background: var(--main); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 25px; color: white;"><i class="fa fa-user"></i></div><div style="margin-left: 15px;"><b id="display-name">Ruslan Bek</b><br><small id="display-phone" style="color: var(--gray);"></small></div></div>
+        <div style="display: flex; align-items: center; padding: 20px 0;"><div style="width: 60px; height: 60px; background: var(--main); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 25px; color: white;"><i class="fa fa-user"></i></div><div style="margin-left: 15px;"><b id="display-name">Foydalanuvchi</b><br><small id="display-phone" style="color: var(--gray);"></small></div></div>
         <div class="menu-list">
             <div class="menu-item" onclick="openPage('cart', document.querySelectorAll('.nav-item')[2])"><div><i class="fa fa-box"></i> Buyurtmalarim</div><i class="fa fa-chevron-right"></i></div>
             <div class="menu-item" onclick="localStorage.clear(); location.reload();"><div><i class="fa fa-right-from-bracket"></i> Chiqish</div></div>
@@ -98,7 +98,8 @@
             <div class="card-box">
                 <small>To'lov uchun karta (Humo):</small><br>
                 <b id="card-num" style="font-size: 18px;">4073420067355457</b><br>
-                <button onclick="copyCard()" style="font-size:12px; margin-top:5px; cursor:pointer; background:#eee; border:1px solid #ccc; padding:2px 8px; border-radius:5px;">Nusxa olish</button>
+                <span style="color: var(--main); font-weight: bold;">Gulzebo Xolboeva</span><br>
+                <button onclick="copyCard()" style="font-size:12px; margin-top:8px; cursor:pointer; background:#eee; border:1px solid #ccc; padding:4px 10px; border-radius:5px;">Nusxa olish</button>
             </div>
             <select id="p-size" style="width:100%; padding:12px; border-radius:10px; border:1px solid #ddd; margin-bottom:15px;"></select>
             <button class="btn-pay" onclick="sendOrder()">To'lovni tasdiqlash</button>
@@ -208,7 +209,6 @@
         const user = JSON.parse(localStorage.getItem('ruslan_user'));
         const size = document.getElementById('p-size').value;
 
-        // Backendga buyurtmani saqlash
         try {
             await fetch(`${BACKEND_URL}/api/orders`, {
                 method: 'POST',
@@ -218,9 +218,7 @@
         } catch (e) { console.log(e); }
 
         localStorage.setItem('my_order', JSON.stringify({name: selectedP.name, date: Date.now(), status: "waiting"}));
-        
-        // Telegramga xabar yuborish
-        const text = `💳 TO'LOV QILINDI\n📦: ${selectedP.name}\n💰: ${selectedP.price.toLocaleString()} so'm\n📏: ${size}\n👤: ${user.name}\n📞: ${user.phone}\n\n(Iltimos, kartaga pulni o'tkazib tasdiqlang!)`;
+        const text = `💳 TO'LOV QILINDI\n📦: ${selectedP.name}\n💰: ${selectedP.price.toLocaleString()} so'm\n📏: ${size}\n👤: ${user.name}\n📞: ${user.phone}\n\nKarta: 4073420067355457 (Gulzebo Xolboeva)`;
         window.location.href = `https://t.me/Ruslanbek20119?text=${encodeURIComponent(text)}`;
     }
 
@@ -228,7 +226,6 @@
         const order = JSON.parse(localStorage.getItem('my_order'));
         const container = document.getElementById('order-status-list');
         if(!order) { document.getElementById('cart-empty').style.display = 'block'; container.innerHTML = ""; return; }
-        
         document.getElementById('cart-empty').style.display = 'none';
         
         let st, rang, belgi;
@@ -238,13 +235,8 @@
         else { st = "Yetkazib berildi ✅"; rang = "var(--blue)"; belgi = "📦"; }
 
         container.innerHTML = `<div class="status-box" style="border-left: 5px solid ${rang};">
-            <b>${order.name}</b><br>
-            <span style="color:${rang}; font-weight:bold;">${belgi} ${st}</span><br>
-            <small style="color:#888;">Admin kodi bilan tekshiring.</small>
-            <div style="margin-top:10px;">
-                <input type="text" id="admin-code-input" style="padding:8px; width:60%; border:1px solid #ddd; border-radius:8px;" placeholder="Kod...">
-                <button onclick="checkAdminCode()" style="padding:8px; background:var(--main); color:white; border:none; border-radius:8px; cursor:pointer;">OK</button>
-            </div>
+            <b>${order.name}</b><br><span style="color:${rang}; font-weight:bold;">${belgi} ${st}</span><br>
+            <div style="margin-top:10px;"><input type="text" id="admin-code-input" style="padding:8px; width:60%; border:1px solid #ddd; border-radius:8px;" placeholder="Kod..."><button onclick="checkAdminCode()" style="padding:8px; background:var(--main); color:white; border:none; border-radius:8px; cursor:pointer;">OK</button></div>
         </div>`;
     }
 
