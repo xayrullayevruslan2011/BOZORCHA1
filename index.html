@@ -42,6 +42,11 @@
         .uzum-price-box { background: #f8f8f8; padding: 12px; border-radius: 12px; margin: 10px 0; }
         .card-box { background: #f3f0ff; border: 1px dashed var(--main); padding: 10px; border-radius: 12px; margin-bottom: 10px; font-size: 13px; }
         .status-box { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--orange); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        
+        /* Telegram Style Notification */
+        .tg-style-box { text-align: left; background: #fff; border-radius: 12px; animation: fadeIn 0.3s; }
+        .tg-style-box p { margin: 8px 0; font-size: 14px; line-height: 1.4; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -71,23 +76,8 @@
 <div id="order-modal" class="modal" onclick="if(event.target==this) closeModal()">
     <div class="modal-content">
         <div class="m-left"><img id="m-img" src=""></div>
-        <div class="m-right">
-            <h2 id="m-title" style="margin:0; font-size: 18px;"></h2>
-            <div class="uzum-price-box">
-                <div id="m-price" style="font-size: 22px; font-weight: bold;"></div>
-                <small style="color: var(--green);">Tezkor yetkazib berish ✅</small>
+        <div id="m-right-panel" class="m-right">
             </div>
-            <div class="card-box">
-                <small>Karta (Humo):</small><br>
-                <b id="card-num">4073420067355457</b>
-                <button onclick="copyCard()" style="border:none; background:none; color:var(--main); cursor:pointer; font-weight:bold;">[Nusxa]</button>
-            </div>
-            <label style="font-size:11px; color:#666;">O'lchamni tanlang:</label>
-            <select id="p-size" class="inp"></select>
-            <input type="text" id="promo-code" class="inp" placeholder="Promokod">
-            <button id="pay-btn" onclick="sendOrder()" class="btn-reg" style="margin-top:10px;">Payme orqali to'lash</button>
-            <button onclick="closeModal()" style="background:none; border:none; color:#999; margin-top:10px; font-size:12px; cursor:pointer;">Yopish</button>
-        </div>
     </div>
 </div>
 
@@ -96,6 +86,7 @@
     tg.expand();
     const BACKEND_URL = "https://bozorcha1.onrender.com";
 
+    // MAHSULOTLAR RO'YXATI (Aynan o'ziniki, 40 ta)
     const products = [
         {name: "Qishki Kurtka Premium", price: 200000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=70951574663cbae2ac73b1f8a4f8a2ea3c06527a-9099023-images-thumbs&n=13"},
         {name: "Nike Air Max 270", price: 280000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=f1e7218c18bd5095bc3e5696f25fb4348235580a-4322265-images-thumbs&n=13"},
@@ -139,8 +130,9 @@
         {name: "Charm Qo'lqop", price: 55000, type: "other", img: "https://avatars.mds.yandex.net/i?id=c327df75519325dabc72349597d1129978a636c8-4577841-images-thumbs&n=13"}
     ];
 
-    function up25(p) { return Math.round(p * 1.25).toLocaleString(); }
-    
+    // 60% USTAMA BILAN NARXNI HISOBLASH
+    function calcPrice60(p) { return Math.round(p * 1.6).toLocaleString(); }
+
     window.onload = () => { 
         if (!localStorage.getItem('ruslan_user')) document.getElementById('auth-page').style.display = 'flex'; 
         renderProducts(); 
@@ -156,57 +148,91 @@
 
     function renderProducts() { 
         document.getElementById('product-list').innerHTML = products.map(p => `
-            <div class="card" onclick="openOrder('${p.name}', '${up25(p.price)}', '${p.type}', '${p.img}')">
+            <div class="card" onclick="openOrder('${p.name}', '${calcPrice60(p.price)}', '${p.type}', '${p.img}')">
                 <img src="${p.img}">
                 <div class="p-info">
                     <div class="title">${p.name}</div>
-                    <div class="price">${up25(p.price)} so'm</div>
+                    <div class="price">${calcPrice60(p.price)} so'm</div>
                 </div>
             </div>`).join(''); 
     }
 
     let selectedP = {};
     function openOrder(name, price, type, img) {
-        selectedP = {name, price, rawPrice: price, img};
-        document.getElementById('m-title').innerText = name;
-        document.getElementById('m-price').innerText = price + " so'm";
+        selectedP = {name, price, type, img};
+        const sOptions = type === "clothing" ? ["S","M","L","XL","XXL"] : (type === "shoes" ? ["38","39","40","41","42","43","44"] : ["Standart"]);
+        
         document.getElementById('m-img').src = img;
-        const s = document.getElementById('p-size');
-        if(type==="clothing") s.innerHTML = ["S","M","L","XL","XXL"].map(x=>`<option>${x}</option>`).join('');
-        else if(type==="shoes") s.innerHTML = ["38","39","40","41","42","43","44"].map(x=>`<option>${x}</option>`).join('');
-        else s.innerHTML = "<option>Standart</option>";
+        document.getElementById('m-right-panel').innerHTML = `
+            <h2 style="margin:0; font-size: 18px;">${name}</h2>
+            <div class="uzum-price-box">
+                <div style="font-size: 22px; font-weight: bold;">${price} so'm</div>
+                <small style="color: var(--green);">Tezkor yetkazib berish ✅</small>
+            </div>
+            <label style="font-size:11px; color:#666;">O'lchamni tanlang:</label>
+            <select id="p-size" class="inp">${sOptions.map(x=>`<option>${x}</option>`).join('')}</select>
+            <input type="text" id="promo-code" class="inp" placeholder="Promokod">
+            <button id="pay-btn" onclick="showTelegramPayment()" class="btn-reg" style="margin-top:10px;">Payme orqali to'lash</button>
+            <button onclick="closeModal()" style="background:none; border:none; color:#999; margin-top:10px; font-size:12px; cursor:pointer;">Yopish</button>
+        `;
         document.getElementById('order-modal').style.display = 'flex';
+    }
+
+    // Telegram Bot uslubidagi to'lov interfeysi
+    function showTelegramPayment() {
+        const paymentId = Math.floor(Math.random() * 90000) + 10000;
+        const size = document.getElementById('p-size').value;
+        
+        document.getElementById('m-right-panel').innerHTML = `
+            <div class="tg-style-box">
+                <p>✅ <b>To'lov miqdori qabul qilindi!</b></p>
+                <hr style="border:0; border-top:1px solid #eee;">
+                <p>🆔 <b>To'lov ID:</b> ${paymentId}</p>
+                <p>💵 <b>Miqdori:</b> ${selectedP.price} so'm</p>
+                <p>💳 <b>To'lov uchun:</b> <br>
+                   <b style="font-size:16px; color:var(--blue);">4073 4200 6735 5457</b> 
+                   <button onclick="copyCard()" style="border:none; background:none; color:var(--main); cursor:pointer; font-weight:bold;">[Nusxa]</button>
+                </p>
+                <p>👤 <b>I.F.O:</b> RUSLAN M.</p>
+                <p>⏰ <b>Berilgan vaqt:</b> 5 daqiqa</p>
+                <br>
+                <p style="font-size: 11px; color: #888;">❗ To'lovni amalga oshirgach, "To'lov qildim" tugmasini bosing.</p>
+                <button id="final-btn" onclick="sendOrder('${paymentId}', '${size}')" class="btn-reg">To'lov qildim 💵</button>
+            </div>
+        `;
+    }
+
+    async function sendOrder(id, size) {
+        const user = JSON.parse(localStorage.getItem('ruslan_user'));
+        const btn = document.getElementById('final-btn');
+        btn.innerText = "Tekshirilmoqda..."; btn.disabled = true;
+
+        try {
+            // BACKEND'GA YUBORISH (Sizning render havolangiz ishlayotgan bo'lsa)
+            await fetch(`${BACKEND_URL}/api/orders`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_name: user.name, phone: user.phone, 
+                    product: selectedP.name, price: selectedP.price, 
+                    size: size, order_id: id
+                })
+            });
+            
+            localStorage.setItem('my_order', JSON.stringify({name: selectedP.name, date: Date.now(), status: "waiting"}));
+            
+            // Telegramga yuborish
+            const msg = `YANGI BUYURTMA 🛒\nID: ${id}\nMijoz: ${user.name}\nMahsulot: ${selectedP.name}\nO'lcham: ${size}\nNarxi: ${selectedP.price}`;
+            window.location.href = `https://t.me/Ruslanbek20119?text=${encodeURIComponent(msg)}`;
+            
+        } catch (e) {
+            tg.showAlert("Server xatosi, lekin buyurtma Telegramga yuborilmoqda...");
+            window.location.href = `https://t.me/Ruslanbek20119?text=${encodeURIComponent("Buyurtma ID: " + id)}`;
+        }
     }
 
     function closeModal() { document.getElementById('order-modal').style.display='none'; }
     function copyCard() { navigator.clipboard.writeText("4073420067355457"); tg.showAlert("Nusxalandi!"); }
-
-    async function sendOrder() {
-        const user = JSON.parse(localStorage.getItem('ruslan_user'));
-        const total = selectedP.price;
-        const btn = document.getElementById('pay-btn'); 
-        btn.innerText = "Kuting..."; btn.disabled = true;
-        
-        try {
-            const res = await fetch(`${BACKEND_URL}/api/orders`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    user_name: user.name, 
-                    phone: user.phone, 
-                    product: selectedP.name, 
-                    price: total, 
-                    size: document.getElementById('p-size').value
-                })
-            });
-            const result = await res.json();
-            if (result.pay_url) {
-                localStorage.setItem('my_order', JSON.stringify({name: selectedP.name, date: Date.now(), status: "waiting"}));
-                window.location.href = result.pay_url;
-            } else { tg.showAlert("Xatolik yuz berdi!"); }
-        } catch (e) { tg.showAlert("Server bilan bog'lanishda xato!"); }
-        finally { btn.innerText = "Payme orqali to'lash"; btn.disabled = false; }
-    }
 
     function showPage(p, b) {
         document.getElementById('shop-page').style.display = p === 'shop' ? 'block' : 'none';
@@ -218,7 +244,7 @@
 
     function updateStatus() {
         const order = JSON.parse(localStorage.getItem('my_order')), container = document.getElementById('order-status-list');
-        if(!order) { container.innerHTML = "<p style='text-align:center;'>Hozircha buyurtmalar yo'q</p>"; return; }
+        if(!order) { container.innerHTML = "<p style='text-align:center;'>Buyurtmalar yo'q</p>"; return; }
         let st = "To'lov kutilmoqda...", rang = "var(--orange)";
         if(order.status === "confirmed") { st = "Yo'lga chiqdi 🚀"; rang = "var(--green)"; }
         if(order.status === "rejected") { st = "Rad etildi ❌"; rang = "var(--red)"; }
@@ -237,9 +263,8 @@
         if(code === "OK777") order.status = "confirmed";
         else if(code === "XATO777") order.status = "rejected";
         else if(code === "DELETE777") { localStorage.removeItem('my_order'); showPage('shop'); return; }
-        else { tg.showAlert("Kod noto'g'ri!"); return; }
-        localStorage.setItem('my_order', JSON.stringify(order)); 
-        updateStatus();
+        else { tg.showAlert("Kod xato!"); return; }
+        localStorage.setItem('my_order', JSON.stringify(order)); updateStatus();
     }
 </script>
 </body>
