@@ -7,7 +7,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --main: #7f46f0; --bg: #f4f5f7; --white: #ffffff; --gray: #8b8e99; --text: #1f2026; --orange: #ff9800; --red: #dc3545; }
+        :root { --main: #7f46f0; --bg: #f4f5f7; --white: #ffffff; --gray: #8b8e99; --text: #1f2026; --orange: #ff9800; --red: #dc3545; --green: #28a745; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: var(--text); padding-bottom: 70px; overflow-x: hidden; }
         
         .header-search { background: var(--white); padding: 10px 15px; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #e5e7ea; }
@@ -40,6 +40,12 @@
         .card-box { background: #f3f0ff; border: 1px dashed var(--main); padding: 15px; border-radius: 12px; margin: 15px 0; text-align: center; }
         .btn-pay { width: 100%; padding: 15px; background: var(--main); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
         .status-box { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--orange); }
+
+        /* Baraban stillari */
+        #wheel-container { text-align: center; padding: 20px; background: white; border-radius: 20px; margin-top: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .wheel { width: 260px; height: 260px; border: 8px solid var(--main); border-radius: 50%; margin: 20px auto; position: relative; transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); overflow: hidden; }
+        .wheel-pointer { width: 40px; height: 40px; background: var(--red); clip-path: polygon(50% 100%, 0 0, 100% 0); position: absolute; top: -10px; left: 50%; transform: translateX(-50%); z-index: 10; }
+        .discount-badge { background: var(--green); color: white; padding: 5px 10px; border-radius: 5px; font-weight: bold; display: none; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -48,6 +54,13 @@
         <h2 style="color: var(--main);">Xush kelibsiz!</h2>
         <input type="text" id="reg-name" style="width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd;" placeholder="Ismingiz">
         <input type="tel" id="reg-phone" style="width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd;" placeholder="Telefon raqamingiz">
+        <select id="reg-region" style="width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd;">
+            <option value="">Yashash hududingizni tanlang</option>
+            <option>Toshkent sh.</option><option>Toshkent vil.</option><option>Samarqand</option><option>Farg'ona</option>
+            <option>Andijon</option><option>Namangan</option><option>Buxoro</option><option>Navoiy</option>
+            <option>Qashqadaryo</option><option>Surxondaryo</option><option>Xorazm</option><option>Jizzax</option>
+            <option>Sirdaryo</option><option>Qoraqalpog'iston</option>
+        </select>
         <button onclick="saveUser()" style="width: 100%; padding: 15px; background: var(--main); color: #fff; border: none; border-radius: 12px; font-weight: bold;">Do'konga kirish</button>
     </div>
 
@@ -67,6 +80,21 @@
         </div>
     </div>
 
+    <div id="lucky" class="page">
+        <h3>Omadli Baraban</h3>
+        <div id="wheel-container">
+            <p style="font-size: 14px; color: var(--gray);">Kunda 1 marta aylantiring va chegirma yoki maxsus sovg'a yuting!</p>
+            <div style="position: relative;">
+                <div class="wheel-pointer"></div>
+                <div id="main-wheel" class="wheel">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3561/3561338.png" style="width: 100%; height: 100%; transform: rotate(0deg);">
+                </div>
+            </div>
+            <button id="spin-btn" onclick="spinWheel()" style="padding: 12px 30px; background: var(--orange); color: white; border: none; border-radius: 30px; font-weight: bold; cursor: pointer;">AYLANTIRISH</button>
+            <div id="discount-res" class="discount-badge"></div>
+        </div>
+    </div>
+
     <div id="cart" class="page">
         <h3>Savat (Buyurtmalar)</h3>
         <div id="order-status-list"></div>
@@ -77,16 +105,17 @@
     </div>
 
     <div id="profile" class="page">
-        <div style="display: flex; align-items: center; padding: 20px 0;"><div style="width: 60px; height: 60px; background: var(--main); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 25px; color: white;"><i class="fa fa-user"></i></div><div style="margin-left: 15px;"><b id="display-name">Foydalanuvchi</b><br><small id="display-phone" style="color: var(--gray);"></small></div></div>
+        <div style="display: flex; align-items: center; padding: 20px 0;"><div style="width: 60px; height: 60px; background: var(--main); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 25px; color: white;"><i class="fa fa-user"></i></div><div style="margin-left: 15px;"><b id="display-name">Foydalanuvchi</b><br><small id="display-phone" style="color: var(--gray);"></small><br><small id="display-region" style="color: var(--main);"></small></div></div>
         <div class="menu-list">
-            <div class="menu-item" onclick="openPage('cart', document.querySelectorAll('.nav-item')[2])"><div><i class="fa fa-box"></i> Buyurtmalarim</div><i class="fa fa-chevron-right"></i></div>
+            <div class="menu-item" onclick="openPage('cart', document.querySelectorAll('.nav-item')[3])"><div><i class="fa fa-box"></i> Buyurtmalarim</div><i class="fa fa-chevron-right"></i></div>
             <div class="menu-item" onclick="localStorage.clear(); location.reload();"><div><i class="fa fa-right-from-bracket"></i> Chiqish</div></div>
         </div>
     </div>
 
     <div class="bottom-nav">
-        <button class="nav-item active" onclick="openPage('home', this)"><i class="fa fa-house"></i><span>Bosh sahifa</span></button>
+        <button class="nav-item active" onclick="openPage('home', this)"><i class="fa fa-house"></i><span>Asosiy</span></button>
         <button class="nav-item" onclick="openPage('catalog', this)"><i class="fa fa-magnifying-glass"></i><span>Katalog</span></button>
+        <button class="nav-item" onclick="openPage('lucky', this)"><i class="fa fa-clover"></i><span>Omadli</span></button>
         <button class="nav-item" onclick="openPage('cart', this)"><i class="fa fa-bag-shopping"></i><span>Savat</span></button>
         <button class="nav-item" onclick="openPage('profile', this)"><i class="fa fa-user"></i><span>Profil</span></button>
     </div>
@@ -94,11 +123,12 @@
     <div id="order-modal" class="modal" onclick="if(event.target==this) closeModal()">
         <div class="modal-content">
             <h3 id="m-title"></h3>
+            <div id="discount-info" style="color: var(--green); font-weight: bold; font-size: 14px; display: none;">Baraban chegirmasi qo'llanildi!</div>
             <p id="m-price" style="font-size: 20px; color: var(--main); font-weight: bold;"></p>
             <div class="card-box">
-                <small>To'lov uchun karta (Humo):</small><br>
-                <b id="card-num" style="font-size: 18px;">4073420067355457</b><br>
-                <span style="color: var(--main); font-weight: bold;">Gulzebo Xolboeva</span><br>
+                <small>To'lov uchun karta (Humo):</small><br><br>
+                <b id="card-num" style="font-size: 18px;">4073420067355457</b><br><br>
+                <span style="color: var(--main); font-weight: bold;">Gulzebo Xolboeva</span><br><br>
                 <button onclick="copyCard()" style="font-size:12px; margin-top:8px; cursor:pointer; background:#eee; border:1px solid #ccc; padding:4px 10px; border-radius:5px;">Nusxa olish</button>
             </div>
             <select id="p-size" style="width:100%; padding:12px; border-radius:10px; border:1px solid #ddd; margin-bottom:15px;"></select>
@@ -110,6 +140,7 @@
     let tg = window.Telegram.WebApp;
     tg.expand();
     const BACKEND_URL = "https://bozorcha1.onrender.com";
+    let activeDiscount = 0;
 
     const products = [
         {name: "Qishki Kurtka Premium", price: 200000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=70951574663cbae2ac73b1f8a4f8a2ea3c06527a-9099023-images-thumbs&n=13"},
@@ -125,33 +156,7 @@
         {name: "Dior Bag", price: 190000, type: "other", img: "https://avatars.mds.yandex.net/i?id=f79142412e9a9b7e9e096648252a9c5cb545eb72-9226797-images-thumbs&n=13"},
         {name: "Zara Mokasina", price: 185000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=22d8abd1e0159833b74664f1e37e32232391a5fa-9152303-images-thumbs&n=13"},
         {name: "Sportivka Nike", price: 210000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=4e2ad4cb6f8bb2148e1372db2b732f36aad9cf56-5334272-images-thumbs&n=13"},
-        {name: "Sviter Kashmir", price: 120000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=d09084e02bca0238a10123c4b8b63907c48a67fe-5876970-images-thumbs&n=13"},
-        {name: "etik detiskiy", price: 65000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=2de6a0abd6d4c21e0652d8d6ab8aa9b9ac5c3a3e-5088700-images-thumbs&n=13"},
-        {name: "Termos 1L", price: 35000, type: "other", img: "https://avatars.mds.yandex.net/i?id=cb19d8d4f51449e1d7b2f223701c0cceac170f06-5354769-images-thumbs&n=13"},
-        {name: "etik qizbolalarga", price: 45000, type: "other", img: "https://avatars.mds.yandex.net/i?id=09c35d96d8de2db1debbc11dd510bd89d1ac157c-5165563-images-thumbs&n=13"},
-        {name: "Slipper", price: 40000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=f7eca6059ad7eeb0fd7275ecb4ead8e1b1d3a394-16477287-images-thumbs&n=13"},
-        {name: "Paypoq (12 juft)", price: 45000, type: "other", img: "https://avatars.mds.yandex.net/i?id=e62cd2900f57009005890eca9965dd170b756b56-5233320-images-thumbs&n=13"},
-        {name: "Gucci Glasses", price: 125000, type: "other", img: "https://avatars.mds.yandex.net/i?id=79320094fd45192d98c11a4c562cf841230b4303-13095363-images-thumbs&n=13"},
-        {name: "Mayka Oq", price: 30000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=dea2ae40a8886506b1f6bcd5df7d8a09a16a4c8d-5083805-images-thumbs&n=13"},
-        {name: "Palto Klassik", price: 280000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=4b7e2423be88c3c91c2288bda8b7f530bed31428-11543356-images-thumbs&n=13"},
-        {name: "Grey Svitshot", price: 110000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=a52fa236d5e23058498f47845134381620076a0c-4817585-images-thumbs&n=13"},
-        {name: "Butsi CR7", price: 250000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=955f5a96ef0407a40036c57870d8a26858dc1de1-9147490-images-thumbs&n=13"},
-        {name: "Charm Kasholok", price: 60000, type: "other", img: "https://avatars.mds.yandex.net/i?id=c946c87f9186063f371d28edfd551675f5b367ee-12321292-images-thumbs&n=13"},
-        {name: "Jinsi Kurtka", price: 180000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=2806b3df83565217f518bc6d28669dd0b469da71-12346171-images-thumbs&n=13"},
-        {name: "Ayollar Tufli", price: 195000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=e2848e85ba6b48b1ae981456bd1625821b9bd0d8-9266608-images-thumbs&n=13"},
-        {name: "Shapka Sharf", price: 55000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=da6492ab1e012dfdb6f14d21e1e773014990bfc2-12323207-images-thumbs&n=13"},
-        {name: "Powerbank Mi", price: 120000, type: "other", img: "https://avatars.mds.yandex.net/i?id=d14c1345a79ae8b7cf5e0079f58dad7a46615c5d-4080206-images-thumbs&n=13"},
-        {name: "Real Madrid forma", price: 95000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=91dd766c7da0e17bca09609db0d0ff523bb867ee-5646461-images-thumbs&n=13"},
-        {name: "velosiped", price: 600000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=ee2185a8c49748952fb1e3e616c44a156778aab5-5668729-images-thumbs&n=13"},
-        {name: "Kargo Shim", price: 155000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=527c6bf4959b7393e145d6331eb86d1997330a50-12190079-images-thumbs&n=13"},
-        {name: "Zontik", price: 50000, type: "other", img: "https://avatars.mds.yandex.net/i?id=f95de4ef87a20fd80cb0e69b943300478b24de5d-8236365-images-thumbs&n=13"},
-        {name: "Soch Fen", price: 100000, type: "other", img: "https://avatars.mds.yandex.net/i?id=cfb4f0cc27e67359417b63ee89935b1df007ce1e-5166135-images-thumbs&n=13"},
-        {name: "printercha", price: 95000, type: "other", img: "https://avatars.mds.yandex.net/i?id=4cbef11efd3ef5b256645f41bc7445940bd2f73f-10108411-images-thumbs&n=13"},
-        {name: "Fila Sneakers", price: 220000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=8234a6722a98b9f5722c181de9122965a81b52c0-5470361-images-thumbs&n=13"},
-        {name: "quloqchin", price: 30000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=07095e2b6bb3c1258f1bbe260580632124a5c502-5115418-images-thumbs&n=13"},
-        {name: "Sandali", price: 80000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=e93e7e435d7594b6d12a37d39f75fdba38b22977-5642274-images-thumbs&n=13"},
-        {name: "mafiya o'yini", price: 35000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=edef3ffbc286e535ca0aff0694bdf475dc2021a0-5354907-images-thumbs&n=13"},
-        {name: "Charm Qo'lqop", price: 55000, type: "other", img: "https://avatars.mds.yandex.net/i?id=c327df75519325dabc72349597d1129978a636c8-4577841-images-thumbs&n=13"}
+        {name: "printercha", price: 95000, type: "other", img: "https://avatars.mds.yandex.net/i?id=4cbef11efd3ef5b256645f41bc7445940bd2f73f-10108411-images-thumbs&n=13"}
     ];
 
     window.onload = () => {
@@ -160,6 +165,8 @@
         else {
             document.getElementById('display-name').innerText = user.name;
             document.getElementById('display-phone').innerText = user.phone;
+            document.getElementById('display-region').innerText = "Hudud: " + (user.region || "Belgilanmagan");
+            if(user.discount) activeDiscount = user.discount;
         }
         renderProducts(products);
     }
@@ -167,10 +174,46 @@
     function saveUser() {
         const name = document.getElementById('reg-name').value;
         const phone = document.getElementById('reg-phone').value;
-        if (name.length > 2 && phone.length > 6) {
-            localStorage.setItem('ruslan_user', JSON.stringify({name, phone}));
+        const region = document.getElementById('reg-region').value;
+        if (name.length > 2 && phone.length > 6 && region !== "") {
+            localStorage.setItem('ruslan_user', JSON.stringify({name, phone, region}));
             location.reload();
+        } else { tg.showAlert("Iltimos, barcha ma'lumotlarni to'ldiring!"); }
+    }
+
+    // Baraban Funksiyasi
+    function spinWheel() {
+        const user = JSON.parse(localStorage.getItem('ruslan_user'));
+        if (user.hasSpun) { tg.showAlert("Siz bugungi imkoniyatingizdan foydalangansiz!"); return; }
+
+        const wheel = document.getElementById('main-wheel');
+        const btn = document.getElementById('spin-btn');
+        btn.disabled = true;
+
+        const rand = Math.random() * 100;
+        let result, degree;
+
+        if (rand <= 8) { // 8% Maxsus yutuq
+            result = "PRINTERCHA yutdingiz! (Admin bilan bog'laning)";
+            degree = 1800 + 45; 
+            activeDiscount = 100; // Shartli bepul
+        } else {
+            const discounts = [10, 20, 30, 40, 50];
+            activeDiscount = discounts[Math.floor(Math.random() * discounts.length)];
+            result = activeDiscount + "% chegirma yutdingiz!";
+            degree = 1800 + (Math.random() * 360);
         }
+
+        wheel.style.transform = `rotate(${degree}deg)`;
+
+        setTimeout(() => {
+            document.getElementById('discount-res').style.display = 'block';
+            document.getElementById('discount-res').innerText = "Yutuq: " + result;
+            user.hasSpun = true;
+            user.discount = activeDiscount;
+            localStorage.setItem('ruslan_user', JSON.stringify(user));
+            tg.showAlert("Tabriklaymiz! " + result);
+        }, 4000);
     }
 
     function renderProducts(list) {
@@ -190,9 +233,18 @@
 
     let selectedP = {};
     function openOrder(name, price, type) {
-        selectedP = {name, price};
+        let finalPrice = price;
+        if(activeDiscount > 0 && activeDiscount < 100) {
+            finalPrice = price - (price * activeDiscount / 100);
+            document.getElementById('discount-info').style.display = 'block';
+            document.getElementById('discount-info').innerText = activeDiscount + "% chegirma qo'llanildi!";
+        } else {
+            document.getElementById('discount-info').style.display = 'none';
+        }
+
+        selectedP = {name, price: finalPrice};
         document.getElementById('m-title').innerText = name;
-        document.getElementById('m-price').innerText = price.toLocaleString() + " so'm";
+        document.getElementById('m-price').innerText = finalPrice.toLocaleString() + " so'm";
         const s = document.getElementById('p-size');
         if(type==="clothing") s.innerHTML = ["S","M","L","XL","XXL"].map(x=>`<option>${x}</option>`).join('');
         else if(type==="shoes") s.innerHTML = ["38","39","40","41","42","43","44"].map(x=>`<option>${x}</option>`).join('');
@@ -213,12 +265,12 @@
             await fetch(`${BACKEND_URL}/api/orders`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_name: user.name, phone: user.phone, product: selectedP.name, price: selectedP.price.toString(), size: size })
+                body: JSON.stringify({ user_name: user.name, phone: user.phone, region: user.region, product: selectedP.name, price: selectedP.price.toString(), size: size })
             });
         } catch (e) { console.log(e); }
 
         localStorage.setItem('my_order', JSON.stringify({name: selectedP.name, date: Date.now(), status: "waiting"}));
-        const text = `💳 TO'LOV QILINDI\n📦: ${selectedP.name}\n💰: ${selectedP.price.toLocaleString()} so'm\n📏: ${size}\n👤: ${user.name}\n📞: ${user.phone}\n\nKarta: 4073420067355457 (Gulzebo Xolboeva)`;
+        const text = `💳 TO'LOV QILINDI\n📦: ${selectedP.name}\n💰: ${selectedP.price.toLocaleString()} so'm\n📏: ${size}\n📍 Hudud: ${user.region}\n👤: ${user.name}\n📞: ${user.phone}\n\nKarta: 4073420067355457 (Gulzebo Xolboeva)`;
         window.location.href = `https://t.me/Ruslanbek20119?text=${encodeURIComponent(text)}`;
     }
 
@@ -235,7 +287,7 @@
         else { st = "Yetkazib berildi ✅"; rang = "var(--blue)"; belgi = "📦"; }
 
         container.innerHTML = `<div class="status-box" style="border-left: 5px solid ${rang};">
-            <b>${order.name}</b><br><span style="color:${rang}; font-weight:bold;">${belgi} ${st}</span><br>
+            <b>${order.name}</b><br><span style="color:${rang}; font-weight:bold;">${belgi} ${st}</span><br><br>
             <div style="margin-top:10px;"><input type="text" id="admin-code-input" style="padding:8px; width:60%; border:1px solid #ddd; border-radius:8px;" placeholder="Kod..."><button onclick="checkAdminCode()" style="padding:8px; background:var(--main); color:white; border:none; border-radius:8px; cursor:pointer;">OK</button></div>
         </div>`;
     }
