@@ -2,16 +2,16 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ruslan Market | Uzum Style</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ruslan Market | Mobile Friendly</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --main: #7f46f0; --orange: #ff9800; --green: #28a745; --blue: #007bff; --red: #dc3545; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; padding-bottom: 80px; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; padding-bottom: 80px; -webkit-tap-highlight-color: transparent; }
         
         #auth-page { position: fixed; inset: 0; background: #fff; z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .auth-card { width: 100%; max-width: 320px; text-align: center; }
-        .inp { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; }
+        .inp { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; outline: none; }
         .btn-reg { width: 100%; padding: 15px; background: var(--main); color: #fff; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
         
         header { background: #fff; padding: 15px; text-align: center; border-bottom: 2px solid var(--main); position: sticky; top: 0; z-index: 1000; }
@@ -26,23 +26,32 @@
         .nav-item { border: none; background: none; font-size: 11px; color: #666; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
         .active { color: var(--main); font-weight: bold; }
 
-        /* Uzum Modal */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center; padding: 10px; }
-        .modal-content { 
-            background: #fff; width: 95%; max-width: 750px; border-radius: 20px; overflow: hidden;
-            display: flex; flex-direction: row; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-        .m-left { flex: 1.2; background: #fff; display: flex; align-items: center; justify-content: center; padding: 10px; }
-        .m-left img { width: 100%; max-height: 400px; object-fit: contain; border-radius: 15px; }
-        .m-right { flex: 1; padding: 25px; display: flex; flex-direction: column; border-left: 1px solid #eee; }
-        .uzum-price-box { background: #f8f8f8; padding: 15px; border-radius: 12px; margin: 15px 0; }
-        .card-box { background: #f3f0ff; border: 1px dashed var(--main); padding: 10px; border-radius: 12px; margin-bottom: 10px; }
+        /* --- MODAL (Telefon va Kompyuter uchun) --- */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; padding: 15px; }
         
-        @media (max-width: 650px) {
-            .modal-content { flex-direction: column; max-height: 90vh; overflow-y: auto; }
-            .m-right { border-left: none; padding: 20px; }
+        .modal-content { 
+            background: #fff; width: 100%; max-width: 800px; border-radius: 20px; overflow: hidden;
+            display: flex; flex-direction: row; /* Kompyuterda yonma-yon */
+            max-height: 90vh; 
         }
 
+        .m-left { flex: 1.2; background: #fff; display: flex; align-items: center; justify-content: center; padding: 10px; }
+        .m-left img { width: 100%; max-height: 400px; object-fit: contain; }
+        
+        .m-right { flex: 1; padding: 20px; display: flex; flex-direction: column; border-left: 1px solid #eee; overflow-y: auto; }
+
+        /* TELEFON UCHUN (600px dan kichik ekranlar) */
+        @media (max-width: 600px) {
+            .modal-content { flex-direction: column; } /* Ustma-ust bo'ladi */
+            .m-left { flex: none; height: 250px; }
+            .m-left img { height: 100%; }
+            .m-right { border-left: none; border-top: 1px solid #eee; padding: 15px; }
+            .container { grid-template-columns: 1fr 1fr; gap: 8px; padding: 8px; }
+            .card img { height: 140px; }
+        }
+
+        .uzum-price-box { background: #f8f8f8; padding: 12px; border-radius: 12px; margin: 10px 0; }
+        .card-box { background: #f3f0ff; border: 1px dashed var(--main); padding: 10px; border-radius: 12px; margin-bottom: 10px; font-size: 13px; }
         .status-box { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--orange); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     </style>
 </head>
@@ -77,16 +86,18 @@
             <h2 id="m-title" style="margin:0; font-size: 18px;"></h2>
             <div class="uzum-price-box">
                 <div id="m-price" style="font-size: 22px; font-weight: bold;"></div>
-                <small style="color: var(--green);">Sotuvda mavjud</small>
+                <small style="color: var(--green);">Tezkor yetkazib berish ✅</small>
             </div>
             <div class="card-box">
                 <small>Karta (Humo):</small><br>
                 <b id="card-num">4073420067355457</b>
-                <button onclick="copyCard()" style="border:none; background:none; color:var(--main); cursor:pointer;">[Nusxa]</button>
+                <button onclick="copyCard()" style="border:none; background:none; color:var(--main); cursor:pointer; font-weight:bold;">[Nusxa]</button>
             </div>
+            <label style="font-size:11px; color:#666;">O'lchamni tanlang:</label>
             <select id="p-size" class="inp"></select>
             <input type="text" id="promo-code" class="inp" placeholder="Promokod" oninput="checkPromo()">
-            <button id="pay-btn" onclick="sendOrder()" class="btn-reg">Payme orqali to'lash</button>
+            <button id="pay-btn" onclick="sendOrder()" class="btn-reg" style="margin-top:10px;">Payme orqali to'lash</button>
+            <button onclick="closeModal()" style="background:none; border:none; color:#999; margin-top:10px; font-size:12px; cursor:pointer;">Yopish</button>
         </div>
     </div>
 </div>
@@ -96,6 +107,7 @@
     tg.expand();
     const BACKEND_URL = "https://bozorcha1.onrender.com";
 
+    // Barcha 40 ta mahsulot
     const products = [
         {name: "Qishki Kurtka Premium", price: 200000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=70951574663cbae2ac73b1f8a4f8a2ea3c06527a-9099023-images-thumbs&n=13"},
         {name: "Nike Air Max 270", price: 280000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=f1e7218c18bd5095bc3e5696f25fb4348235580a-4322265-images-thumbs&n=13"},
@@ -140,6 +152,7 @@
     ];
 
     function up25(p) { return Math.round(p * 1.25).toLocaleString(); }
+    
     window.onload = () => { if (!localStorage.getItem('ruslan_user')) document.getElementById('auth-page').style.display = 'flex'; renderProducts(); }
     
     function saveUser() {
@@ -183,7 +196,7 @@
 
     async function sendOrder() {
         const user = JSON.parse(localStorage.getItem('ruslan_user')), total = selectedP.finalPrice || selectedP.rawPrice;
-        const btn = document.getElementById('pay-btn'); btn.innerText = "Yuklanmoqda..."; btn.disabled = true;
+        const btn = document.getElementById('pay-btn'); btn.innerText = "Kuting..."; btn.disabled = true;
         try {
             const res = await fetch(`${BACKEND_URL}/api/orders`, {
                 method: 'POST',
@@ -194,7 +207,7 @@
             if (result.pay_url) {
                 localStorage.setItem('my_order', JSON.stringify({name: selectedP.name, date: Date.now(), status: "waiting"}));
                 window.location.href = result.pay_url;
-            } else { tg.showAlert("Xatolik yuz berdi!"); }
+            } else { tg.showAlert("To'lov linkida xato!"); }
         } catch (e) { tg.showAlert("Server ulanmadi!"); }
         finally { btn.innerText = "Payme orqali to'lash"; btn.disabled = false; }
     }
@@ -208,11 +221,11 @@
 
     function updateStatus() {
         const order = JSON.parse(localStorage.getItem('my_order')), container = document.getElementById('order-status-list');
-        if(!order) { container.innerHTML = "<p>Buyurtma yo'q</p>"; return; }
-        let st = "To'lov tekshirilmoqda...", rang = "var(--orange)";
+        if(!order) { container.innerHTML = "<p style='text-align:center;'>Buyurtma yo'q</p>"; return; }
+        let st = "To'lov kutilmoqda...", rang = "var(--orange)";
         if(order.status === "confirmed") { st = "Yo'lga chiqdi 🚀"; rang = "var(--green)"; }
         if(order.status === "rejected") { st = "Rad etildi ❌"; rang = "var(--red)"; }
-        container.innerHTML = `<div class="status-box" style="border-left:5px solid ${rang}"><b>${order.name}</b><br><span style="color:${rang}">${st}</span><br><input type="text" id="admin-code-input" placeholder="Kod" style="margin-top:5px; padding:3px;"><button onclick="checkAdminCode()">OK</button></div>`;
+        container.innerHTML = `<div class="status-box" style="border-left:5px solid ${rang}"><b>${order.name}</b><br><span style="color:${rang}">${st}</span><br><input type="text" id="admin-code-input" placeholder="Kod" style="margin-top:8px; padding:5px; width:80px;"><button onclick="checkAdminCode()" style="margin-left:5px;">OK</button></div>`;
     }
 
     function checkAdminCode() {
@@ -221,7 +234,7 @@
         if(code === "OK777") order.status = "confirmed";
         else if(code === "XATO777") order.status = "rejected";
         else if(code === "DELETE777") { localStorage.removeItem('my_order'); showPage('shop'); return; }
-        else { tg.showAlert("Kod noto'g'ri!"); return; }
+        else { tg.showAlert("Xato!"); return; }
         localStorage.setItem('my_order', JSON.stringify(order)); updateStatus();
     }
 </script>
