@@ -2,102 +2,143 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ruslan Market | Full Products</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruslan Market | Full Edition</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --main: #7f46f0; --orange: #ff9800; --green: #28a745; --blue: #007bff; --red: #dc3545; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; padding-bottom: 80px; -webkit-tap-highlight-color: transparent; }
+        :root { --main: #7f46f0; --bg: #f4f5f7; --white: #ffffff; --gray: #8b8e99; --text: #1f2026; --orange: #ff9800; --red: #dc3545; --green: #28a745; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: var(--text); padding-bottom: 80px; overflow-x: hidden; }
         
-        #auth-page { position: fixed; inset: 0; background: #fff; z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .auth-card { width: 100%; max-width: 320px; text-align: center; }
-        .inp { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; outline: none; }
-        .btn-reg { width: 100%; padding: 15px; background: var(--main); color: #fff; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
+        .header-search { background: var(--white); padding: 10px 15px; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #e5e7ea; }
+        .search-box { background: #edeff2; border-radius: 10px; display: flex; align-items: center; padding: 8px 12px; margin-bottom: 10px; }
+        .search-box input { border: none; background: transparent; margin-left: 10px; width: 100%; outline: none; font-size: 14px; }
         
-        header { background: #fff; padding: 15px; text-align: center; border-bottom: 2px solid var(--main); position: sticky; top: 0; z-index: 1000; }
-        .container { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .card { background: #fff; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; }
-        .card img { width: 100%; height: 160px; object-fit: cover; background: #eee; }
+        .categories { display: flex; gap: 10px; overflow-x: auto; padding: 5px 0; scrollbar-width: none; }
+        .cat-btn { padding: 8px 15px; background: #fff; border: 1px solid #e5e7ea; border-radius: 20px; font-size: 13px; white-space: nowrap; cursor: pointer; }
+        .cat-btn.active { background: var(--main); color: white; border-color: var(--main); }
+
+        .page { display: none; padding: 15px; animation: fadeIn 0.3s ease; }
+        .active-page { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .card { background: var(--white); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .card img { width: 100%; height: 160px; object-fit: cover; }
         .p-info { padding: 10px; }
-        .price { color: #000; font-weight: bold; font-size: 15px; }
-        .title { font-size: 13px; color: #444; height: 35px; overflow: hidden; margin-bottom: 5px; }
+        .price { font-weight: bold; font-size: 15px; color: var(--main); }
+        .title { font-size: 12px; color: #4d4e59; height: 32px; overflow: hidden; margin-bottom: 5px; }
 
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #ddd; z-index: 1000; }
-        .nav-item { border: none; background: none; font-size: 11px; color: #666; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
-        .active { color: var(--main); font-weight: bold; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--white); display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #e5e7ea; z-index: 2000; }
+        .nav-item { border: none; background: none; color: var(--gray); display: flex; flex-direction: column; align-items: center; font-size: 11px; cursor: pointer; position: relative; }
+        .nav-item.active { color: var(--main); }
+        .badge { position: absolute; top: -5px; right: 5px; background: var(--red); color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; }
 
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; padding: 15px; }
-        .modal-content { background: #fff; width: 100%; max-width: 800px; border-radius: 20px; overflow: hidden; display: flex; flex-direction: row; max-height: 90vh; }
-        .m-left { flex: 1.2; background: #fff; display: flex; align-items: center; justify-content: center; padding: 10px; }
-        .m-left img { width: 100%; max-height: 400px; object-fit: contain; }
-        .m-right { flex: 1; padding: 20px; display: flex; flex-direction: column; border-left: 1px solid #eee; overflow-y: auto; }
-
-        @media (max-width: 600px) {
-            .modal-content { flex-direction: column; }
-            .m-left { flex: none; height: 250px; }
-            .m-right { border-left: none; border-top: 1px solid #eee; padding: 15px; }
-            .container { grid-template-columns: 1fr 1fr; gap: 8px; padding: 8px; }
-        }
-
-        .uzum-price-box { background: #f8f8f8; padding: 12px; border-radius: 12px; margin: 10px 0; }
-        .card-box { background: #f3f0ff; border: 1px dashed var(--main); padding: 10px; border-radius: 12px; margin-bottom: 10px; font-size: 13px; }
-        .status-box { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--orange); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 3000; align-items: flex-end; }
+        .modal-content { background: var(--white); width: 100%; padding: 25px; border-radius: 25px 25px 0 0; box-sizing: border-box; max-height: 90vh; overflow-y: auto; }
+        .input-style { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; }
+        .btn-main { width: 100%; padding: 15px; background: var(--main); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
+        
+        .card-box { background: #f8f9fa; padding: 15px; border-radius: 12px; border: 1px dashed var(--main); margin: 15px 0; position: relative; }
+        .cart-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; background: #fff; padding: 10px; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-<div id="auth-page" style="display: none;">
-    <div class="auth-card">
+    <div id="auth-page" style="display: none; position: fixed; inset: 0; background: #fff; z-index: 5000; flex-direction: column; align-items: center; justify-content: center; padding: 20px;">
         <h2 style="color: var(--main);">Xush kelibsiz!</h2>
-        <input type="text" id="reg-name" class="inp" placeholder="Ismingiz">
-        <input type="tel" id="reg-phone" class="inp" placeholder="Telefon raqamingiz">
-        <button class="btn-reg" onclick="saveUser()">Kirish</button>
+        <input type="text" id="reg-name" class="input-style" placeholder="Ismingiz">
+        <input type="tel" id="reg-phone" class="input-style" placeholder="Telefon raqamingiz">
+        <button onclick="saveUser()" class="btn-main">Kirish</button>
     </div>
-</div>
 
-<header><b>RUSLAN MARKET</b></header>
-
-<div id="shop-page"><div class="container" id="product-list"></div></div>
-<div id="orders-page" style="display:none; padding: 20px;">
-    <h3>📦 Buyurtmalarim</h3>
-    <div id="order-status-list"></div>
-</div>
-
-<div class="bottom-nav">
-    <button class="nav-item active" onclick="showPage('shop', this)"><span>🛍</span>Do'kon</button>
-    <button class="nav-item" onclick="showPage('orders', this)"><span>📦</span>Buyurtmalar</button>
-</div>
-
-<div id="order-modal" class="modal" onclick="if(event.target==this) closeModal()">
-    <div class="modal-content">
-        <div class="m-left"><img id="m-img" src=""></div>
-        <div class="m-right">
-            <h2 id="m-title" style="margin:0; font-size: 18px;"></h2>
-            <div class="uzum-price-box">
-                <div id="m-price" style="font-size: 22px; font-weight: bold;"></div>
-                <small style="color: var(--green);">Tezkor yetkazib berish ✅</small>
-            </div>
-            <div class="card-box">
-                <small>Karta (Humo):</small><br>
-                <b id="card-num">4073420067355457</b>
-                <button onclick="copyCard()" style="border:none; background:none; color:var(--main); cursor:pointer; font-weight:bold;">[Nusxa]</button>
-            </div>
-            <label style="font-size:11px; color:#666;">O'lchamni tanlang:</label>
-            <select id="p-size" class="inp"></select>
-            <input type="text" id="promo-code" class="inp" placeholder="Promokod">
-            <button id="pay-btn" onclick="sendOrder()" class="btn-reg" style="margin-top:10px;">Payme orqali to'lash</button>
-            <button onclick="closeModal()" style="background:none; border:none; color:#999; margin-top:10px; font-size:12px; cursor:pointer;">Yopish</button>
+    <div class="header-search">
+        <div class="search-box"><i class="fa fa-search"></i><input type="text" id="searchInput" oninput="filterProducts()" placeholder="Mahsulot qidirish..."></div>
+        <div class="categories">
+            <button class="cat-btn active" onclick="filterCat('all', this)">Hammasi</button>
+            <button class="cat-btn" onclick="filterCat('clothing', this)">Kiyim</button>
+            <button class="cat-btn" onclick="filterCat('shoes', this)">Poyabzal</button>
+            <button class="cat-btn" onclick="filterCat('other', this)">Boshqa</button>
         </div>
     </div>
-</div>
+
+    <div id="home" class="page active-page"><div class="container" id="product-list"></div></div>
+
+    <div id="lucky" class="page" style="text-align: center;">
+        <h3>Omadli Baraban</h3>
+        <p>Imkoniyat: <b id="chance-count">0</b></p>
+        <canvas id="canvas" width="300" height="300" style="width: 250px; transition: 5s cubic-bezier(0.1, 0, 0.1, 1);"></canvas>
+        <button onclick="spin()" class="btn-main" style="background: var(--orange); margin-top: 20px;">AYLANTIRISH</button>
+    </div>
+
+    <div id="cart-page" class="page">
+        <h3>Savat</h3>
+        <div id="cart-items"></div>
+        <div id="cart-total-box" style="display:none; margin-top: 20px;">
+            <div style="display:flex; justify-content: space-between; font-weight:bold;"><span>Jami:</span><span id="total-price">0</span></div>
+            <button class="btn-main" style="margin-top: 15px;" onclick="openOrderModal()">Buyurtma berish</button>
+        </div>
+    </div>
+
+    <div id="profile" class="page">
+        <div style="background: white; padding: 20px; border-radius: 15px; display: flex; align-items: center;">
+            <div style="width: 50px; height: 50px; background: var(--main); color:white; border-radius: 50%; display:flex; align-items:center; justify-content:center;"><i class="fa fa-user"></i></div>
+            <div style="margin-left: 15px;"><b id="p-name">Mijoz</b></div>
+        </div>
+        <div style="margin-top: 20px;">
+            <div class="btn-main" style="background: white; color: black; border: 1px solid #eee; margin-bottom: 10px;" onclick="toggleAbout()">Biz haqimizda</div>
+            <div id="about-box" style="display:none; padding: 15px; background: #fff; border-radius: 10px; font-size: 14px; margin-bottom: 10px;">
+                <p><b>Manzil:</b> Amir Temur 3, 9-etaj, 65-kvartira</p>
+                <p><b>Tel:</b> +998943012687</p>
+            </div>
+            <button onclick="localStorage.clear(); location.reload();" class="btn-main" style="background: var(--red);">Chiqish</button>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <button class="nav-item active" onclick="openPage('home', this)"><i class="fa fa-house"></i><span>Asosiy</span></button>
+        <button class="nav-item" onclick="openPage('lucky', this)"><i class="fa fa-clover"></i><span>Omadli</span></button>
+        <button class="nav-item" onclick="openPage('cart-page', this)"><i class="fa fa-shopping-cart"></i><span>Savat</span><span class="badge" id="cart-count">0</span></button>
+        <button class="nav-item" onclick="openPage('profile', this)"><i class="fa fa-user"></i><span>Profil</span></button>
+    </div>
+
+    <div id="detail-modal" class="modal" onclick="if(event.target==this) this.style.display='none'">
+        <div class="modal-content">
+            <img id="det-img" style="width:100%; height:200px; object-fit:cover; border-radius:15px;">
+            <h3 id="det-title" style="margin:10px 0;"></h3>
+            <p id="det-price" style="font-size:22px; color:var(--main); font-weight:bold;"></p>
+            <select id="det-size" class="input-style"></select>
+            <button class="btn-main" onclick="addToCart()">Savatga qo'shish</button>
+        </div>
+    </div>
+
+    <div id="order-modal" class="modal" onclick="if(event.target==this) this.style.display='none'">
+        <div class="modal-content">
+            <h3>Buyurtmani yakunlash</h3>
+            <div class="card-box">
+                <small>To'lov uchun Humo karta:</small><br>
+                <b>4073 4200 6735 5457</b><br>
+                <small>Gulzebo Xolboeva</small>
+                <button onclick="copyKarta()" style="position:absolute; right:10px; top:25px; background:var(--main); color:white; border:none; padding:5px 10px; border-radius:5px;">Nusxa</button>
+            </div>
+            <input type="text" id="ord-address" class="input-style" placeholder="Manzil (Uy, dom, podyezd, kvartira)">
+            <select id="ord-delivery" class="input-style">
+                <option value="Kuryer">Kuryer orqali yetkazish</option>
+                <option value="Punkt">Topshirish punkti (Pochta/BTS)</option>
+            </select>
+            <input type="text" id="ord-promo" class="input-style" placeholder="Promokod bormi? (Chegirmani yozing)">
+            <button class="btn-main" onclick="sendToTelegram()">Buyurtmani yuborish</button>
+        </div>
+    </div>
 
 <script>
     let tg = window.Telegram.WebApp;
-    tg.expand();
-    const BACKEND_URL = "https://bozorcha1.onrender.com";
+    let user = JSON.parse(localStorage.getItem('rus_v6')) || null;
+    let cart = [];
+    let selectedItem = null;
 
     const products = [
-        {name: "Qishki Kurtka Premium", price: 200000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=70951574663cbae2ac73b1f8a4f8a2ea3c06527a-9099023-images-thumbs&n=13"},
+        {name: "Kurtka Premium", price: 200000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=70951574663cbae2ac73b1f8a4f8a2ea3c06527a-9099023-images-thumbs&n=13"},
         {name: "Nike Air Max 270", price: 280000, type: "shoes", img: "https://avatars.mds.yandex.net/i?id=f1e7218c18bd5095bc3e5696f25fb4348235580a-4322265-images-thumbs&n=13"},
         {name: "Polo Dvoyka", price: 150000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=b8b693d50f4c2381d985a1c8f33d3cb0be4ca464-4027983-images-thumbs&n=13"},
         {name: "Klassik Shim", price: 99000, type: "clothing", img: "https://avatars.mds.yandex.net/i?id=410b6c32f91f6361a156b6f65a31f0c6d4faaf6f-5235890-images-thumbs&n=13"},
@@ -139,107 +180,160 @@
         {name: "Charm Qo'lqop", price: 55000, type: "other", img: "https://avatars.mds.yandex.net/i?id=c327df75519325dabc72349597d1129978a636c8-4577841-images-thumbs&n=13"}
     ];
 
-    function up25(p) { return Math.round(p * 1.25).toLocaleString(); }
-    
-    window.onload = () => { 
-        if (!localStorage.getItem('ruslan_user')) document.getElementById('auth-page').style.display = 'flex'; 
-        renderProducts(); 
-    }
-    
+    window.onload = () => {
+        if(!user) document.getElementById('auth-page').style.display='flex';
+        else {
+            document.getElementById('p-name').innerText = user.name;
+            document.getElementById('chance-count').innerText = user.chances;
+        }
+        renderProducts(products);
+        drawWheel();
+    };
+
     function saveUser() {
-        const n = document.getElementById('reg-name').value, p = document.getElementById('reg-phone').value;
-        if (n.length > 2 && p.length > 6) { 
-            localStorage.setItem('ruslan_user', JSON.stringify({name:n, phone:p})); 
-            document.getElementById('auth-page').style.display = 'none'; 
+        const n = document.getElementById('reg-name').value;
+        const p = document.getElementById('reg-phone').value;
+        if(n && p) {
+            user = {name: n, phone: p, chances: 1};
+            localStorage.setItem('rus_v6', JSON.stringify(user));
+            location.reload();
         }
     }
 
-    function renderProducts() { 
-        document.getElementById('product-list').innerHTML = products.map(p => `
-            <div class="card" onclick="openOrder('${p.name}', '${up25(p.price)}', '${p.type}', '${p.img}')">
+    function renderProducts(list) {
+        document.getElementById('product-list').innerHTML = list.map(p => `
+            <div class="card" onclick="openDetail('${p.name}', ${p.price}, '${p.type}', '${p.img}')">
                 <img src="${p.img}">
                 <div class="p-info">
                     <div class="title">${p.name}</div>
-                    <div class="price">${up25(p.price)} so'm</div>
+                    <div class="price">${(Math.round(p.price * 1.25)).toLocaleString()} so'm</div>
                 </div>
-            </div>`).join(''); 
+            </div>`).join('');
     }
 
-    let selectedP = {};
-    function openOrder(name, price, type, img) {
-        selectedP = {name, price, rawPrice: price, img};
-        document.getElementById('m-title').innerText = name;
-        document.getElementById('m-price').innerText = price + " so'm";
-        document.getElementById('m-img').src = img;
-        const s = document.getElementById('p-size');
-        if(type==="clothing") s.innerHTML = ["S","M","L","XL","XXL"].map(x=>`<option>${x}</option>`).join('');
-        else if(type==="shoes") s.innerHTML = ["38","39","40","41","42","43","44"].map(x=>`<option>${x}</option>`).join('');
-        else s.innerHTML = "<option>Standart</option>";
-        document.getElementById('order-modal').style.display = 'flex';
-    }
-
-    function closeModal() { document.getElementById('order-modal').style.display='none'; }
-    function copyCard() { navigator.clipboard.writeText("4073420067355457"); tg.showAlert("Nusxalandi!"); }
-
-    async function sendOrder() {
-        const user = JSON.parse(localStorage.getItem('ruslan_user'));
-        const total = selectedP.price;
-        const btn = document.getElementById('pay-btn'); 
-        btn.innerText = "Kuting..."; btn.disabled = true;
+    function openDetail(name, price, type, img) {
+        selectedItem = {name, price: Math.round(price * 1.25), img};
+        document.getElementById('det-img').src = img;
+        document.getElementById('det-title').innerText = name;
+        document.getElementById('det-price').innerText = selectedItem.price.toLocaleString() + " so'm";
         
-        try {
-            const res = await fetch(`${BACKEND_URL}/api/orders`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    user_name: user.name, 
-                    phone: user.phone, 
-                    product: selectedP.name, 
-                    price: total, 
-                    size: document.getElementById('p-size').value
-                })
-            });
-            const result = await res.json();
-            if (result.pay_url) {
-                localStorage.setItem('my_order', JSON.stringify({name: selectedP.name, date: Date.now(), status: "waiting"}));
-                window.location.href = result.pay_url;
-            } else { tg.showAlert("Xatolik yuz berdi!"); }
-        } catch (e) { tg.showAlert("Server bilan bog'lanishda xato!"); }
-        finally { btn.innerText = "Payme orqali to'lash"; btn.disabled = false; }
+        const s = document.getElementById('det-size');
+        if(type === 'clothing') s.innerHTML = '<option>S</option><option>M</option><option>L</option><option>XL</option>';
+        else if(type === 'shoes') s.innerHTML = '<option>39</option><option>40</option><option>41</option><option>42</option><option>43</option>';
+        else s.innerHTML = '<option>Standart</option>';
+        
+        document.getElementById('detail-modal').style.display = 'flex';
     }
 
-    function showPage(p, b) {
-        document.getElementById('shop-page').style.display = p === 'shop' ? 'block' : 'none';
-        document.getElementById('orders-page').style.display = p === 'orders' ? 'block' : 'none';
-        document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
-        if(b) b.classList.add('active'); 
-        if(p === 'orders') updateStatus();
+    function addToCart() {
+        const size = document.getElementById('det-size').value;
+        cart.push({...selectedItem, size});
+        updateCartUI();
+        document.getElementById('detail-modal').style.display = 'none';
+        tg.showAlert("Savatga qo'shildi!");
     }
 
-    function updateStatus() {
-        const order = JSON.parse(localStorage.getItem('my_order')), container = document.getElementById('order-status-list');
-        if(!order) { container.innerHTML = "<p style='text-align:center;'>Hozircha buyurtmalar yo'q</p>"; return; }
-        let st = "To'lov kutilmoqda...", rang = "var(--orange)";
-        if(order.status === "confirmed") { st = "Yo'lga chiqdi 🚀"; rang = "var(--green)"; }
-        if(order.status === "rejected") { st = "Rad etildi ❌"; rang = "var(--red)"; }
-        container.innerHTML = `
-            <div class="status-box" style="border-left:5px solid ${rang}">
-                <b>${order.name}</b><br>
-                <span style="color:${rang}">${st}</span><br>
-                <input type="text" id="admin-code-input" placeholder="Kod" style="margin-top:8px; padding:5px; width:80px;">
-                <button onclick="checkAdminCode()" style="margin-left:5px;">OK</button>
+    function updateCartUI() {
+        document.getElementById('cart-count').innerText = cart.length;
+        const container = document.getElementById('cart-items');
+        if(cart.length === 0) {
+            container.innerHTML = "Savat bo'sh";
+            document.getElementById('cart-total-box').style.display = 'none';
+            return;
+        }
+        document.getElementById('cart-total-box').style.display = 'block';
+        let total = 0;
+        container.innerHTML = cart.map((item, index) => {
+            total += item.price;
+            return `
+            <div class="cart-item">
+                <img src="${item.img}" width="40">
+                <div style="flex:1"><b>${item.name}</b> (${item.size})</div>
+                <div style="color:var(--main)">${item.price.toLocaleString()} so'm</div>
+                <i class="fa fa-trash" onclick="removeFromCart(${index})" style="color:red; margin-left:10px;"></i>
             </div>`;
+        }).join('');
+        document.getElementById('total-price').innerText = total.toLocaleString() + " so'm";
     }
 
-    function checkAdminCode() {
-        const code = document.getElementById('admin-code-input').value.toUpperCase();
-        let order = JSON.parse(localStorage.getItem('my_order'));
-        if(code === "OK777") order.status = "confirmed";
-        else if(code === "XATO777") order.status = "rejected";
-        else if(code === "DELETE777") { localStorage.removeItem('my_order'); showPage('shop'); return; }
-        else { tg.showAlert("Kod noto'g'ri!"); return; }
-        localStorage.setItem('my_order', JSON.stringify(order)); 
-        updateStatus();
+    function removeFromCart(idx) {
+        cart.splice(idx, 1);
+        updateCartUI();
+    }
+
+    function openOrderModal() { document.getElementById('order-modal').style.display = 'flex'; }
+
+    function copyKarta() {
+        navigator.clipboard.writeText("4073420067355457");
+        tg.showAlert("Karta raqami nusxalandi!");
+    }
+
+    function sendToTelegram() {
+        const addr = document.getElementById('ord-address').value;
+        const deliv = document.getElementById('ord-delivery').value;
+        const promo = document.getElementById('ord-promo').value;
+        if(!addr) { alert("Manzilni yozing!"); return; }
+
+        let msg = `YANGI BUYURTMA 🛍\n\n`;
+        let total = 0;
+        cart.forEach(item => {
+            msg += `• ${item.name} (${item.size}) - ${item.price.toLocaleString()} so'm\n`;
+            total += item.price;
+        });
+        msg += `\n💰 Jami: ${total.toLocaleString()} so'm`;
+        msg += `\n📍 Manzil: ${addr}`;
+        msg += `\n🚚 Yetkazish: ${deliv}`;
+        msg += `\n🎟 Promokod: ${promo || 'Yoq'}`;
+        msg += `\n\n👤 Mijoz: ${user.name}\n📞 Tel: ${user.phone}`;
+
+        window.location.href = `https://t.me/Ruslanbek20119?text=${encodeURIComponent(msg)}`;
+    }
+
+    function toggleAbout() {
+        const box = document.getElementById('about-box');
+        box.style.display = box.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function filterCat(cat, el) {
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+        if(cat === 'all') renderProducts(products);
+        else renderProducts(products.filter(p => p.type === cat));
+    }
+
+    function filterProducts() {
+        const q = document.getElementById('searchInput').value.toLowerCase();
+        renderProducts(products.filter(p => p.name.toLowerCase().includes(q)));
+    }
+
+    function openPage(id, el) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+        document.getElementById(id).classList.add('active-page');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    function drawWheel() {
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const sectors = ["10%", "20%", "30%", "40%", "50%", "PRINTER"];
+        const colors = ["#7f46f0", "#ff9800", "#28a745", "#dc3545", "#333", "#ffcc00"];
+        const arc = (2 * Math.PI) / 6;
+        for(let i=0; i<6; i++) {
+            ctx.fillStyle = colors[i];
+            ctx.beginPath(); ctx.moveTo(150, 150); ctx.arc(150, 150, 140, i*arc, (i+1)*arc); ctx.fill();
+            ctx.fillStyle = "#fff"; ctx.save(); ctx.translate(150,150); ctx.rotate(i*arc + arc/2);
+            ctx.fillText(sectors[i], 80, 5); ctx.restore();
+        }
+    }
+
+    function spin() {
+        if(user.chances <= 0) return;
+        user.chances--;
+        document.getElementById('chance-count').innerText = user.chances;
+        const deg = 3600 + Math.random() * 360;
+        document.getElementById('canvas').style.transform = `rotate(${deg}deg)`;
+        setTimeout(() => { tg.showAlert("Barabanda yutgan chegirmani buyurtma berishda yozing!"); }, 5000);
     }
 </script>
 </body>
